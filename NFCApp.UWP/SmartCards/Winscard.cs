@@ -268,6 +268,8 @@ namespace NFCApp.UWP.SmartCards
 
         /*===========================================================
         '   PROTOCOL
+        '   GG: by ISO standard 7816-3 the first available protocol
+        '   is used, normally T1
         '===========================================================*/
         public const int SCARD_PROTOCOL_UNDEFINED = 0x00;          // There is no active protocol.
         public const int SCARD_PROTOCOL_T0 = 0x01;                 // T=0 is the active protocol.

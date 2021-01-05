@@ -115,7 +115,7 @@ namespace NFCApp.UWP
             if (retCode == Winscard.SCARD_S_SUCCESS)
             {
                 // GG: Add code here to switch between cards
-                _connectedCard = new MIFARE(cardInt);
+                _connectedCard = new MIFARE(new IntPtr(cardInt));
             }
             else
             {
@@ -126,46 +126,56 @@ namespace NFCApp.UWP
         private string GetCardUID()
         {
             string cardUID;
-            byte[] receivedUID = new byte[256];
-            Winscard.SCARD_IO_REQUEST request = new Winscard.SCARD_IO_REQUEST()
-            {
-                dwProtocol = Winscard.SCARD_PROTOCOL_T1,
-                cbPciLength = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Winscard.SCARD_IO_REQUEST))
-            };
-            byte[] sendBytesBuffer = _connectedCard.Get_GetUIDCommand();
-            int outBytes = receivedUID.Length;
-            int status = Winscard.SCardTransmit(_connectedCard.CardNumber, ref request, ref sendBytesBuffer[0], sendBytesBuffer.Length, ref request, ref receivedUID[0], ref outBytes);
+            CardResponse response = _connectedCard.GetGuid();
 
-            if (status == Winscard.SCARD_S_SUCCESS)
+            if (response.Status == Winscard.SCARD_S_SUCCESS)
             {
-                cardUID = BitConverter.ToString(receivedUID.ToArray()).Replace("-", string.Empty).ToLower();
+                cardUID = BitConverter.ToString(response.ResponseBuffer.ToArray()).Replace("-", string.Empty).ToLower();
             }
             else
             {
-                throw new Exception(Winscard.GetScardErrMsg(status));
+                throw new Exception(Winscard.GetScardErrMsg(response.Status));
             }
             return cardUID;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonRead_Click(object sender, RoutedEventArgs e)
         {
-
+            ReadCard();
         }
 
-        //private void btnReadCard_Click(object sender, RoutedEventArgs e)
-        //{
-        //    ReadCard();
-        //}
+        private void ReadCard()
+        {
 
-        //private void ReadCard()
-        //{
-        //    byte[] responseBuffer = new byte[256];
-        //    int bytesReturned = -1;
-        //    for (int i = 0; i < 10; i++)
-        //    {
-        //        int status = Winscard.SCardControl(_connectedCard.CardNumber, Winscard.SCARD_CTL_CODE(3500), ref ACR122.GetGreenBlinking(1)[0], ACR122.GetGreenBlinking().Length, ref responseBuffer[0], responseBuffer.Length, ref bytesReturned);
-        //    }
-        //}
+            //byte[] responseBuffer = new byte[256];
+            //int bytesReturned = -1;
+            //for (int i = 0; i < 10; i++)
+            //{
+            //int status = Winscard.SCardControl(_connectedCard.CardNumber, Winscard.SCARD_CTL_CODE(3500), ref ACR122.GetGreenBlinking(1)[0], ACR122.GetGreenBlinking().Length, ref responseBuffer[0], responseBuffer.Length, ref bytesReturned);
+            //}
+            WriteMessageAsync(txtRead, string.Empty);
+            WriteMessageAsync(txtReadBlocks, string.Empty);
+            string inputBlock = txtInputBlock.Text;
+            CardResponse readValueResponse = _connectedCard.ReadValue((byte)int.Parse(inputBlock));
+            CardResponse readBlocksResponse = _connectedCard.ReadBlocks((byte)int.Parse(inputBlock));
+            if (readValueResponse.Status == Winscard.SCARD_S_SUCCESS)
+            {
+                string data = string.Empty;
+                foreach (byte b in readValueResponse.ResponseBuffer)
+                {
+                    //data = $"{data}{(char)b}";
+                    data = $"{data}-{b}";
+                }
+                string blocks = string.Empty;
+                foreach(byte b in readBlocksResponse.ResponseBuffer)
+                {
+                    //data = $"{data}{(char)b}";
+                    blocks = $"{blocks}-{(char)b}";
+                }
+                WriteMessageAsync(txtRead, data);
+                WriteMessageAsync(txtReadBlocks, blocks);
+            }
+        }
 
         private async void ManageExceptionAsync(Exception ex)
         {

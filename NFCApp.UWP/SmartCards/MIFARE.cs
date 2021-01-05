@@ -9,26 +9,38 @@ namespace NFCApp.UWP.SmartCards
     public class MIFARE : Card
     {
         /// <summary>
-        /// Command: Class, INS, P1, P2, Le        
+        /// Commands: Class, INS, P1, P2, Le, Data, DataLength        
         /// </summary>
         private readonly byte[] GetUIDCommand = { 0xFF, 0xCA, 0x00, 0x00, 0x00 };
         private readonly byte[] LoadAuthenticationKeysCommand = { 0xFF, 0x82, 0x00, 0x00, 0x00 };
+        private readonly byte[] ReadBinaryBlocksCommand = { 0xFF, 0xB0, 0x00, 0x00, 0x00 };
+        private readonly byte[] ReadValueBlockCommand = { 0xFF, 0xB1, 0x00, 0x00, 0x04 };
 
-        public MIFARE(int hCard) : base(hCard) { }
+        public MIFARE(IntPtr hCard) : base(hCard) { }
 
-        public override byte[] Get_GetUIDCommand()
+        protected override byte[] Get_GetUIDCommand()
         {
             return GetUIDCommand;
         }
 
-        public override byte[] Get_LoadAuthenticationKeysCommand()
+        protected override byte[] Get_LoadAuthenticationKeysCommand()
         {
             return LoadAuthenticationKeysCommand;
         }
 
-        public override byte[] Get_ReadBinaryBlocksCommand()
+        protected override byte[] Get_ReadBinaryBlocksCommand(byte startingBlock, int length)
         {
-            throw new NotImplementedException();
+            byte[] command = ReadBinaryBlocksCommand;
+            command.SetValue(startingBlock, 3);
+            command.SetValue((byte)length, 4);
+            return command;
+        }
+
+        protected override byte[] Get_ReadValueBlockCommand(byte block)
+        {
+            byte[] command = ReadValueBlockCommand;
+            command.SetValue(block, 3);            
+            return command;
         }
     }
 }
