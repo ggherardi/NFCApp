@@ -6,14 +6,22 @@
     xmlns:local="using:NFCApp.UWP"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,-643,0">
-        <Button x:ConnectionId='2' Content="Read" Height="56" Margin="581,119,0,0" VerticalAlignment="Top" Width="284"                         />
+    <Grid Margin="0,-11,-971,-40">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button x:ConnectionId='2' x:Name="btnRead" Content="Read" Height="56" Margin="581,119,0,0" VerticalAlignment="Top" Width="284"                         />
         <TextBlock x:ConnectionId='3' Name="txtMessages" HorizontalAlignment="Left" Height="69" Margin="59,690,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="284"/>
         <TextBlock x:ConnectionId='4' Name="txtATR" HorizontalAlignment="Left" Margin="59,199,0,0" Text="Waiting ATR.." TextWrapping="Wrap" VerticalAlignment="Top" Height="458" Width="506" />
         <TextBlock x:ConnectionId='5' Name="txtStatus" HorizontalAlignment="Left" Margin="59,675,0,0" Text="Waiting Status.." TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="278"/>
         <TextBlock x:ConnectionId='6' x:Name="txtRead" HorizontalAlignment="Left" Margin="581,199,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."></TextBlock>
-        <TextBox x:ConnectionId='7' Name="txtInputBlock" HorizontalAlignment="Left" Height="56" Margin="916,119,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
-        <TextBlock x:ConnectionId='8' x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>
+        <TextBox x:ConnectionId='7' Name="txtInputBlock" HorizontalAlignment="Left" Height="56" Margin="916,119,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
+        <ScrollViewer HorizontalAlignment="Left" Height="315" Margin="554,443,0,0" VerticalAlignment="Top" Width="511">
+            <TextBlock x:ConnectionId='10' x:Name="txtReadBlocks" TextWrapping="Wrap"/>
+        </ScrollViewer>
+        <TextBlock x:ConnectionId='8' x:Name="txtTestOperation" HorizontalAlignment="Left" Margin="1091,199,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="572" Width="286" Text="waiting read.." Grid.ColumnSpan="2"/>
+        <Button x:ConnectionId='9' x:Name="btnTestOperation" Content="TestOperation" Height="56" Margin="1091,114,0,0" VerticalAlignment="Top" Width="284"                                Grid.ColumnSpan="2" />
+        <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>
 

@@ -44,6 +44,13 @@ namespace NFCApp.UWP
             foreach (DeviceInformation device in devices)
             {
                 InitReader(device);
+                SmartCardReader reader = await SmartCardReader.FromIdAsync(device.Id);
+                IReadOnlyList<SmartCard> cards = await reader.FindAllCardsAsync();
+                if(cards.Count > 0)
+                {
+                    ConnectCard();
+                    WriteCardInfo(cards.First());
+                }                
             }
         }
 
@@ -67,11 +74,16 @@ namespace NFCApp.UWP
             }
         }
 
-        private async void CardAdded(SmartCardReader sender, CardAddedEventArgs args)
+        private void CardAdded(SmartCardReader sender, CardAddedEventArgs args)
+        {
+            SmartCard card = args.SmartCard;
+            WriteCardInfo(card);
+        }
+
+        private async void WriteCardInfo(SmartCard card)
         {
             try
-            {
-                var card = args.SmartCard;
+            {                               
                 var atr = await card.GetAnswerToResetAsync();
                 byte[] atrBytes = atr.ToArray();
                 WriteMessageAsync(txtATR, string.Empty);
@@ -101,10 +113,10 @@ namespace NFCApp.UWP
                 ConnectCard();
                 WriteMessageAsync(txtMessages, GetCardUID());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ManageExceptionAsync(ex);
-            }
+            }           
         }
 
         private void ConnectCard()
@@ -158,25 +170,41 @@ namespace NFCApp.UWP
             string inputBlock = txtInputBlock.Text;
             CardResponse readValueResponse = _connectedCard.ReadValue((byte)int.Parse(inputBlock));
             CardResponse readBlocksResponse = _connectedCard.ReadBlocks((byte)int.Parse(inputBlock));
-            if (readValueResponse.Status == Winscard.SCARD_S_SUCCESS)
+            if (readBlocksResponse.Status == Winscard.SCARD_S_SUCCESS)
             {
+                int i = 0;
+                int j = 0;
                 string data = string.Empty;
-                foreach (byte b in readValueResponse.ResponseBuffer)
-                {
-                    //data = $"{data}{(char)b}";
-                    data = $"{data}-{b}";
-                }
+                //foreach (byte b in readValueResponse.ResponseBuffer)
+                //{
+                //    //data = $"{data}{(char)b}";
+                //    data = $"{data}-{b}";
+                //}
                 string blocks = string.Empty;
                 foreach(byte b in readBlocksResponse.ResponseBuffer)
                 {
                     //data = $"{data}{(char)b}";
-                    blocks = $"{blocks}-{(char)b}";
+                    data = $"{data}{(!string.IsNullOrEmpty(blocks) ? " - " : string.Empty)}{b}";
+                    blocks = $"{blocks}{(!string.IsNullOrEmpty(blocks) ? " - " : string.Empty)}{i++}[{(b == 0x90 ? "END" : ((char)b).ToString())}]";                    
                 }
+                j++;
                 WriteMessageAsync(txtRead, data);
                 WriteMessageAsync(txtReadBlocks, blocks);
+                AppendMessageAsync(txtReadBlocks, System.Text.Encoding.ASCII.GetString(readBlocksResponse.ResponseBuffer));
+                AppendMessageAsync(txtReadBlocks, System.Text.Encoding.UTF8.GetString(readBlocksResponse.ResponseBuffer));
+                AppendMessageAsync(txtReadBlocks, System.Text.Encoding.Unicode.GetString(readBlocksResponse.ResponseBuffer));
+                CardResponse testResponse = _connectedCard.TestOperation();
             }
         }
 
+        private void btnTestOperation_Click(object sender, RoutedEventArgs e)
+        {
+            CardResponse response = _connectedCard.TestOperation();
+            _connectedCard.WriteStringToMemory("Gianmattia!", 4);
+            //WriteMessageAsync(txtTestOperation, GetBytesAsString(response.ResponseBuffer));
+        }
+
+        #region AuxMethods
         private async void ManageExceptionAsync(Exception ex)
         {
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -200,5 +228,18 @@ namespace NFCApp.UWP
                 textBlock.Text = $"{textBlock.Text}{Environment.NewLine}{message}" ;
             });
         }
+        #endregion
+
+        #region ByteBufferUtilities
+        private string GetBytesHexAsString(byte[] buffer)
+        {
+            return BitConverter.ToString(buffer.ToArray());
+        }
+
+        private string GetBytesAsString(byte[] buffer)
+        {
+            return string.Join('-', buffer);
+        }
+        #endregion
     }
 }
