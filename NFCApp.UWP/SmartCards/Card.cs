@@ -65,17 +65,23 @@ namespace NFCApp.UWP.SmartCards
         public CardResponse WriteBlocks(byte blockNumber, byte[] dataIn)
         {            
             return WriteBlocks(blockNumber, dataIn, MaxWritableBlocks);
-        }        
+        }                
 
-        public void WriteStringToMemory(string value, int startingBlock)
+        public void WriteNDEFMessage(string value, int startingBlock)
         {
-            byte[] stringBytes = Encoding.UTF8.GetBytes(value);
+            NDEFMessageTLV message = new NDEFMessageTLV(value);
+            byte[] blockBytes = message.GetFormattedBlock();
             int j = 0;
-            for (int i = 0; i < stringBytes.Length; i += 4)
+            for (int i = 0; i < blockBytes.Length; i += 4)
             {
-                WriteBlocks((byte)(startingBlock + j), stringBytes.Skip(j * MaxWritableBlocks).Take(MaxWritableBlocks).ToArray());
+                WriteBlocks((byte)(startingBlock + j), blockBytes.Skip(j * MaxWritableBlocks).Take(MaxWritableBlocks).ToArray());
                 j++;
             }            
+        }
+
+        public void WriteNDEFMessage(string value)
+        {
+            WriteNDEFMessage(value, 4);
         }
 
         public CardResponse TestOperation()
@@ -84,7 +90,7 @@ namespace NFCApp.UWP.SmartCards
             return Transmit(new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x05, 0xD4, 0x40, 0x01, 0x30, 0x04 });
         }
     }
-
+    
     public class CardResponse
     {
         public int Status { get; set; }

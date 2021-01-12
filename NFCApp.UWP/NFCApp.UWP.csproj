@@ -89,7 +89,8 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="lib\Utility.cs" />
+    <Compile Include="SmartCards\TLVBlock.cs" />
+    <Compile Include="SmartCards\Utility.cs" />
     <Compile Include="SmartCards\ACR122.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -161,6 +162,9 @@
       <Project>{CB8442E5-B886-4FBE-B7EA-BB394428B74E}</Project>
       <Name>NFCApp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

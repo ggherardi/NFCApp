@@ -174,22 +174,20 @@ namespace NFCApp.UWP
             {
                 int i = 0;
                 int j = 0;
-                string data = string.Empty;
-                //foreach (byte b in readValueResponse.ResponseBuffer)
-                //{
-                //    //data = $"{data}{(char)b}";
-                //    data = $"{data}-{b}";
-                //}
-                string blocks = string.Empty;
+                string decimals = string.Empty;
+                string characters = string.Empty;
+                string hexadecimals = string.Empty;
                 foreach(byte b in readBlocksResponse.ResponseBuffer)
                 {
-                    //data = $"{data}{(char)b}";
-                    data = $"{data}{(!string.IsNullOrEmpty(blocks) ? " - " : string.Empty)}{b}";
-                    blocks = $"{blocks}{(!string.IsNullOrEmpty(blocks) ? " - " : string.Empty)}{i++}[{(b == 0x90 ? "END" : ((char)b).ToString())}]";                    
+                    //data = $"{data}{(char)b}";                                       
+                    hexadecimals = $"{hexadecimals}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{b.ToString("X2")}";
+                    characters = $"{characters}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{i++}[{(b == 0x90 ? "END" : ((char)b).ToString())}]";
+                    decimals = $"{decimals}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{b}{(i % 4 == 0 ? Environment.NewLine : string.Empty)}";
                 }
                 j++;
-                WriteMessageAsync(txtRead, data);
-                WriteMessageAsync(txtReadBlocks, blocks);
+                WriteMessageAsync(txtRead, decimals);
+                WriteMessageAsync(txtReadBlocks, characters);
+                WriteMessageAsync(txtReadBlocks, hexadecimals);
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.ASCII.GetString(readBlocksResponse.ResponseBuffer));
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.UTF8.GetString(readBlocksResponse.ResponseBuffer));
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.Unicode.GetString(readBlocksResponse.ResponseBuffer));
@@ -200,8 +198,7 @@ namespace NFCApp.UWP
         private void btnTestOperation_Click(object sender, RoutedEventArgs e)
         {
             CardResponse response = _connectedCard.TestOperation();
-            _connectedCard.WriteStringToMemory("Gianmattia!", 4);
-            //WriteMessageAsync(txtTestOperation, GetBytesAsString(response.ResponseBuffer));
+            _connectedCard.WriteNDEFMessage("TenDAFUQ!");            
         }
 
         #region AuxMethods

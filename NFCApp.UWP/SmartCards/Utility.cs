@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NFCApp.UWP.lib
+namespace NFCApp.UWP.SmartCards
 {
-    class Utility
+    public class Utility
     {
+
     }
 }

@@ -14,13 +14,13 @@
         <TextBlock Name="txtMessages" HorizontalAlignment="Left" Height="69" Margin="59,690,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="284"/>
         <TextBlock Name="txtATR" HorizontalAlignment="Left" Margin="59,199,0,0" Text="Waiting ATR.." TextWrapping="Wrap" VerticalAlignment="Top" Height="458" Width="506" />
         <TextBlock Name="txtStatus" HorizontalAlignment="Left" Margin="59,675,0,0" Text="Waiting Status.." TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="278"/>
-        <TextBlock x:Name="txtRead" HorizontalAlignment="Left" Margin="581,199,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."></TextBlock>
+        <TextBlock x:Name="txtRead" HorizontalAlignment="Left" Margin="581,208,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="564" Width="386" Text="waiting read.."></TextBlock>
         <TextBox Name="txtInputBlock" HorizontalAlignment="Left" Height="56" Margin="916,119,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
-        <ScrollViewer HorizontalAlignment="Left" Height="315" Margin="554,443,0,0" VerticalAlignment="Top" Width="511">
-            <TextBlock x:Name="txtReadBlocks" TextWrapping="Wrap"/>
+        <ScrollViewer HorizontalAlignment="Left" Height="566" Margin="1006,208,0,0" VerticalAlignment="Top" Width="353">
+            <TextBlock x:Name="txtReadBlocks" Text="waiting read.." TextWrapping="Wrap"/>
         </ScrollViewer>
-        <TextBlock x:Name="txtTestOperation" HorizontalAlignment="Left" Margin="1091,199,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="572" Width="286" Text="waiting read.." Grid.ColumnSpan="2"/>
-        <Button x:Name="btnTestOperation" Content="TestOperation" Height="56" Margin="1091,114,0,0" VerticalAlignment="Top" Width="284" Click="btnTestOperation_Click" Grid.ColumnSpan="2" />
+        <TextBlock x:Name="txtTestOperation" HorizontalAlignment="Left" Margin="898,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="57" Width="477" Text="waiting test operation.."/>
+        <Button x:Name="btnTestOperation" Content="TestOperation" Height="56" Margin="581,33,0,0" VerticalAlignment="Top" Width="284" Click="btnTestOperation_Click" />
         <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>
