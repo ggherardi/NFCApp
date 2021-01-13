@@ -30,13 +30,13 @@
     <AppXManifest Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2021-01-12T01:28:29.452</Modified>
+      <Modified>2021-01-13T17:29:26.052</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\NFCApp.UWP.exe">
       <PackagePath>entrypoint\NFCApp.UWP.exe</PackagePath>
-      <Modified>2021-01-12T01:28:28.677</Modified>
+      <Modified>2021-01-13T17:29:24.847</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\.nuget\packages\ndeflibrary\3.0.2\lib\portable-net45+win8+wp8+wpa81\NdefLibrary.dll">
       <PackagePath>NdefLibrary.dll</PackagePath>
@@ -235,11 +235,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\App.xbf">
       <PackagePath>App.xbf</PackagePath>
-      <Modified>2021-01-12T01:28:28.615</Modified>
+      <Modified>2021-01-13T17:29:24.767</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\MainPage.xbf">
       <PackagePath>MainPage.xbf</PackagePath>
-      <Modified>2021-01-12T01:28:28.615</Modified>
+      <Modified>2021-01-13T17:29:24.767</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.18362.0\\redist\Debug\x86\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
@@ -259,7 +259,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\Core\NFCApp.UWP.exe">
       <PackagePath>NFCApp.UWP.exe</PackagePath>
-      <Modified>2021-01-12T01:28:29.449</Modified>
+      <Modified>2021-01-13T17:29:26.033</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

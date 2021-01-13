@@ -69,7 +69,7 @@ namespace NFCApp.UWP.SmartCards
 
         public void WriteNDEFMessage(string value, int startingBlock)
         {
-            NDEFMessageTLV message = new NDEFMessageTLV(value);
+            NDEFMessage message = new NDEFMessage(value);
             byte[] blockBytes = message.GetFormattedBlock();
             int j = 0;
             for (int i = 0; i < blockBytes.Length; i += 4)

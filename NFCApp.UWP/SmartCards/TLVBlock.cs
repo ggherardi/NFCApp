@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,25 +42,34 @@ namespace NFCApp.UWP.SmartCards
         }
     }
 
-    public class NDEFMessageTLV : TLVBlock
+    public class NDEFMessage : TLVBlock
     {
         public override byte Tag { get => 0x03; }
 
-        public NDEFMessageTLV(string value)
+        public NDEFMessage(NDEFRecord record)
         {
-            Value = Encoding.UTF8.GetBytes(value);
-            Length = GetValueLengthInBytes(Value.Length);
+
+        }
+
+        public NDEFMessage(string value)
+        {
+            // in base alla lunghezza del testo potrei aver bisogno di più record!
+            RTDText text = new RTDText(value, RTDText.EnglishLanguage, RTDText.TextEncoding.UTF8);
+            NDEFRecord record = new NDEFRecord(text);
+
+            Value = Encoding.UTF8.GetBytes(value); // NO, il value sono i record!
+            Length = GetValueLengthInBytes(Value.Length); // NO, la length me la devo calcolare in base ai record!
         }
 
         public override byte[] GetFormattedBlock()
         {
             byte[] tlvBlock = new byte[] { Tag };
-            return tlvBlock.Concat(Length).Concat(Value).Concat(new TerminatorTLV().GetFormattedBlock()).ToArray();
+            return tlvBlock.Concat(Length).Concat(Value).Concat(new Terminator().GetFormattedBlock()).ToArray();
         }
     }
 
-    public class TerminatorTLV : TLVBlock
+    public class Terminator : TLVBlock
     {
         public override byte Tag { get => 0xFE; }
-    }
+    }    
 }

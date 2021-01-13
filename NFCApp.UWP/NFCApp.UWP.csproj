@@ -89,6 +89,8 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="SmartCards\NDEFRecord.cs" />
+    <Compile Include="SmartCards\NDEFRecordType.cs" />
     <Compile Include="SmartCards\TLVBlock.cs" />
     <Compile Include="SmartCards\Utility.cs" />
     <Compile Include="SmartCards\ACR122.cs" />
