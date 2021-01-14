@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace NFCApp.UWP.SmartCards
 {
+    /// <summary>
+    /// Tag, Length, Value block template as specified in the "Type 2 Tag Operation Specification" TS, chapter 2.3
+    /// </summary>
     public abstract class TLVBlock
     {
         protected byte _tag;
@@ -42,23 +45,22 @@ namespace NFCApp.UWP.SmartCards
         }
     }
 
+    /// <summary>
+    /// NDEFMessage Tag Length Value Block as specified in the "Type 2 Tag Operation Specification" TS, chapter 2.3.4
+    /// </summary>
     public class NDEFMessage : TLVBlock
     {
         public override byte Tag { get => 0x03; }
 
-        public NDEFMessage(NDEFRecord record)
-        {
-
-        }
+        public NDEFMessage(NDEFRecord record) { }
 
         public NDEFMessage(string value)
         {
             // in base alla lunghezza del testo potrei aver bisogno di più record!
             RTDText text = new RTDText(value, RTDText.EnglishLanguage, RTDText.TextEncoding.UTF8);
             NDEFRecord record = new NDEFRecord(text);
-
-            Value = Encoding.UTF8.GetBytes(value); // NO, il value sono i record!
-            Length = GetValueLengthInBytes(Value.Length); // NO, la length me la devo calcolare in base ai record!
+            Value = record.GetBytes();
+            Length = GetValueLengthInBytes(Value.Length);
         }
 
         public override byte[] GetFormattedBlock()

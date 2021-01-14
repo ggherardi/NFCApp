@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace NFCApp.UWP.SmartCards
 {
+    /// <summary>
+    /// Abstract class used as template for all the Record Types as specified in the "NFC Record Type Definition (RTD)" TS
+    /// </summary>
     public abstract class NDEFRecordType
     {
         public abstract int TypeIdentifier { get; }
@@ -13,9 +16,12 @@ namespace NFCApp.UWP.SmartCards
         public abstract byte[] GetBytes();       
     }
 
+    /// <summary>
+    /// Text Record Type, character "T", as specified in the "NFC Record Type Definition (RTD)" TS
+    /// </summary>
     public class RTDText : NDEFRecordType
     {
-        public override int TypeIdentifier { get => 0x54; } // Character "T"
+        public override int TypeIdentifier { get => 0x54; } // Record type "T", Text
         public override int TypeLength { get => 0x01; }
 
         private readonly int _flag = 0x00;

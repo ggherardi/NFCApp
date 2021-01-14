@@ -198,7 +198,7 @@ namespace NFCApp.UWP
         private void btnTestOperation_Click(object sender, RoutedEventArgs e)
         {
             CardResponse response = _connectedCard.TestOperation();
-            _connectedCard.WriteNDEFMessage("TenDAFUQ!");            
+            _connectedCard.WriteNDEFMessage(txtInput.Text);            
         }
 
         #region AuxMethods

@@ -19,8 +19,9 @@
         <ScrollViewer HorizontalAlignment="Left" Height="566" Margin="1006,208,0,0" VerticalAlignment="Top" Width="353">
             <TextBlock x:Name="txtReadBlocks" Text="waiting read.." TextWrapping="Wrap"/>
         </ScrollViewer>
-        <TextBlock x:Name="txtTestOperation" HorizontalAlignment="Left" Margin="898,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="57" Width="477" Text="waiting test operation.."/>
+        <TextBlock x:Name="txtTestOperation" HorizontalAlignment="Left" Margin="1115,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="57" Width="260" Text="waiting test operation.."/>
         <Button x:Name="btnTestOperation" Content="TestOperation" Height="56" Margin="581,33,0,0" VerticalAlignment="Top" Width="284" Click="btnTestOperation_Click" />
+        <TextBox x:Name="txtInput" HorizontalAlignment="Left" Height="47" Margin="916,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175"/>
         <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>
