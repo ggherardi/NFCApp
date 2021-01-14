@@ -38,7 +38,6 @@ namespace NFCApp.UWP.SmartCards
             }
             else
             {
-
                 valueLengthInBytes = new byte[] { 0xFF, valueLengthInBytes[2], valueLengthInBytes[3] };
             }
             return valueLengthInBytes;
