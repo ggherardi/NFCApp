@@ -89,22 +89,23 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="SmartCards\NDEFRecord.cs" />
-    <Compile Include="SmartCards\NDEFRecordType.cs" />
-    <Compile Include="SmartCards\TLVBlock.cs" />
-    <Compile Include="SmartCards\Utility.cs" />
-    <Compile Include="SmartCards\ACR122.cs" />
+    <Compile Include="Lib\Readers\NFCReader.cs" />
+    <Compile Include="Lib\SmartCards\NDEFRecord.cs" />
+    <Compile Include="Lib\SmartCards\NDEFRecordType.cs" />
+    <Compile Include="Lib\SmartCards\TLVBlock.cs" />
+    <Compile Include="Lib\SmartCards\Utility.cs" />
+    <Compile Include="Lib\Readers\ACR122.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SmartCards\Card.cs" />
-    <Compile Include="SmartCards\LEDAndBuzzerControl.cs" />
+    <Compile Include="Lib\SmartCards\NFCCard.cs" />
+    <Compile Include="Lib\SmartCards\IReaderSignalControl.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SmartCards\MIFARE.cs" />
+    <Compile Include="Lib\SmartCards\Ntag215.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SmartCards\Winscard.cs" />
+    <Compile Include="Lib\SmartCards\Winscard.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -165,9 +166,7 @@
       <Name>NFCApp</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="lib\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
