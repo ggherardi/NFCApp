@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SmartCards;
 using System.Diagnostics;
+using CSharp.NFC.Cards;
+using CSharp.NFC.NDEF;
 
-namespace NFCApp.UWP.SmartCards
+namespace CSharp.NFC.Readers
 {
     public abstract class NFCReader
     {
@@ -40,11 +42,13 @@ namespace NFCApp.UWP.SmartCards
         #endregion
 
         #region Abstraction
+        protected abstract byte[] Get_ModuleDataExchangeCommand();
         protected abstract byte[] Get_GetUIDCommand();
         protected abstract byte[] Get_LoadAuthenticationKeysCommand();
         protected abstract byte[] Get_ReadBinaryBlocksCommand(byte startingBlock, int length);
         protected abstract byte[] Get_ReadValueBlockCommand(byte block);
-        protected abstract byte[] Get_UpdateBinaryBlockCommand(byte blockNumber, byte[] dataIn, int numberOfBytesToUpdate);
+        protected abstract byte[] Get_UpdateBinaryBlockCommand(byte blockNumber, byte[] blockData, int numberOfBytesToUpdate);
+        protected abstract byte[] Get_DirectTransmitCommand(byte[] payload);
         #endregion
 
         #region Reader initialization
@@ -167,15 +171,16 @@ namespace NFCApp.UWP.SmartCards
             WriteNDEFMessage(value, 4);
         }
 
+        public ReaderResponse TransmitCardCommand(byte[] cardCommand)
+        {
+            return Transmit(cardCommand);
+        }
+
+
         public ReaderResponse TestOperation()
         {
             //return Transmit(new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x04, 0xD4, 0x4A, 0x01, 0x00 }); POLLING: pag. 26 API-ACR122USAM-2.01.pdf
             return Transmit(new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x05, 0xD4, 0x40, 0x01, 0x30, 0x04 });
-        }
-
-        public void TestError()
-        {
-            ManageException(new Exception("TEST"));
         }
         #endregion
 

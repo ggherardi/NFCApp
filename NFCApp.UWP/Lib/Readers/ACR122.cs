@@ -6,34 +6,61 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.SmartCards;
 
-namespace NFCApp.UWP.SmartCards
+namespace CSharp.NFC.Readers
 {
     public class ACR122 : NFCReader, IReaderSignalControl
     {
         /// <summary>
+        /// Class: 0xFF (1 byte) - Instruction: 0xCA (1 byte) - Data out [] (n bytes)
+        /// Reference: UM0801-03 (PN533 User Manual), chapter 8.4.9. InCommunicateThru, pag. 109
+        /// </summary>
+        private byte[] ModuleDataExchangeCommand { get => new byte[] { 0xD4, 0x42, 0x00 }; }
+
+        /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xCA (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Le: 0x00 (1 byte)
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 4.1. Get Data, pag. 11
         /// </summary>
         private byte[] GetUIDCommand { get => new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 }; }
+
         /// <summary>
-        /// There should be no need for this for MIFARE UltraLight, I'll manage the ATAC ticket protection by crypting the data
+        /// Class: 0xFF (1 byte) - Instruction: 0x82 (1 byte) - P1: 0x00 (Key Structure) (1 byte) - P2: 0x00 (Key Number) (1 byte) - Le: 0x06 (1 byte) - Data In: {key} (6 bytes)
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.1. Load Authentication Keys, pag. 12
         /// </summary>
-        private byte[] LoadAuthenticationKeysCommand { get => new byte[] { 0xFF, 0x82, 0x00, 0x00, 0x00 }; }
+        private byte[] LoadAuthenticationKeysCommand { get => new byte[] { 0xFF, 0x82, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; }
+
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xB0 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Le: {numberOfBytesToRead: max 16 bytes} (1 byte)
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.3. Read Binary Blocks, pag. 16
         /// </summary>
         private byte[] ReadBinaryBlocksCommand { get => new byte[] { 0xFF, 0xB0, 0x00, 0x00, 0x00 }; }
+
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xB1 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Le: 0x04 (1 byte)
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.1. Load Authentication Keys, pag. 12
         /// </summary>
         private byte[] ReadValueBlockCommand { get => new byte[] { 0xFF, 0xB1, 0x00, 0x00, 0x04 }; }
+
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xD6 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Lc: {numberOfBytesToUpdate} (1 byte) - Data In: {dataIn} (4 bytes)
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.3. Update Binary Blocks, pag. 17
         /// </summary>
         private byte[] UpdateBinaryBlockCommand { get => new byte[] { 0xFF, 0xD6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; }
+
+        /// <summary>
+        /// Class: 0xFF (1 byte) - Instruction: 0x00 (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Lc: {payloadLength} (1 byte) - Data In: {payload} (payload.length bytes, max 255 bytes)
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.1. Load Authentication Keys, pag. 12
+        /// </summary>
+        private byte[] DirectTransmitCommand { get => new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00 }; }
+
 
         public ACR122(SmartCardReader reader) : base(reader) { }
 
         public ACR122() : base() { }
+
+        protected override byte[] Get_ModuleDataExchangeCommand()
+        {
+            throw new NotImplementedException();
+        }
 
         protected override byte[] Get_GetUIDCommand()
         {
@@ -72,6 +99,14 @@ namespace NFCApp.UWP.SmartCards
             return command;
         }
 
+        protected override byte[] Get_DirectTransmitCommand(byte[] payload)
+        {
+            byte[] command = DirectTransmitCommand;
+            command.SetValue(payload.Length, 4);
+            command.SetValue(payload, 5);
+            return command;
+        }
+
         #region Signaling
         public byte[] GetErrorSignalCommand()
         {
@@ -96,8 +131,7 @@ namespace NFCApp.UWP.SmartCards
                 FinalState = LEDAndBuzzerControl.LEDLights.Green,
                 InitialBlinkingStateDuration = 1,
                 ToggleBlinkingStateDuration = 1,
-                Buzzer = LEDAndBuzzerControl.BuzzerSound.OnDuringBlinkLEDOn,
-                Repetitions = 2
+                Buzzer = LEDAndBuzzerControl.BuzzerSound.OnDuringBlinkLEDOn                
             };
             return control.GetCommand();
         }

@@ -19,6 +19,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Xamarin.Forms;
 using Windows.Storage.Streams;
+using CSharp.NFC.Readers;
+using CSharp.NFC;
 
 namespace NFCApp.UWP
 {
@@ -114,7 +116,7 @@ namespace NFCApp.UWP
 
         private void ReadCard()
         {
-            TicketValidator.TestError();
+            //TicketValidator.TestError();
             //byte[] responseBuffer = new byte[256];
             //int bytesReturned = -1;
             //for (int i = 0; i < 10; i++)
