@@ -204,9 +204,9 @@ namespace CSharp.NFC.Readers
             NFCOperation response = new NFCOperation();
             try
             {
-                byte[] dataExchangeCommand = _controller.GetDataExchangeCommand();
+                NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
                 byte[] passwordAuthenticationCommand = _connectedCard.GetPasswordAuthenticationCommand(password);
-                byte[] directTransmitCommand = Get_DirectTransmitCommand(dataExchangeCommand.Concat(passwordAuthenticationCommand).ToArray());
+                byte[] directTransmitCommand = Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(passwordAuthenticationCommand).ToArray());
                 response = TransmitCardCommand(directTransmitCommand);
             }   
             catch(Exception ex)
@@ -221,9 +221,9 @@ namespace CSharp.NFC.Readers
             NFCOperation response = new NFCOperation();
             try
             {
-                byte[] dataExchangeCommand = _controller.GetDataExchangeCommand();
+                NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
                 byte[] getVersionCommand = _connectedCard.GetGetVersionCommand();
-                byte[] directTransmitCommand = Get_DirectTransmitCommand(dataExchangeCommand.Concat(getVersionCommand).ToArray());
+                byte[] directTransmitCommand = Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(getVersionCommand).ToArray());
                 response = TransmitCardCommand(directTransmitCommand);
             }
             catch(Exception ex)

@@ -1,5 +1,4 @@
-﻿using NFCApp.UWP.SmartCards;
-using Poz1.NFCForms.Abstract;
+﻿using Poz1.NFCForms.Abstract;
 using System;
 using System.Collections.Generic;
 using System.IO;

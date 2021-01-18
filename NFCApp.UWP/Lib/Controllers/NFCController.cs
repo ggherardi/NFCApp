@@ -8,14 +8,14 @@ namespace CSharp.NFC.Controllers
 {
     public abstract class NFCController
     {
-        protected abstract byte[] Get_DataExchangeCommand(byte[] payload);
+        protected abstract NFCCommand Get_DataExchangeCommand(byte[] payload);
 
-        public byte[] GetDataExchangeCommand(byte[] payload)
+        public NFCCommand GetDataExchangeCommand(byte[] payload)
         {
             return Get_DataExchangeCommand(payload);
         }
 
-        public byte[] GetDataExchangeCommand()
+        public NFCCommand GetDataExchangeCommand()
         {
             return this.GetDataExchangeCommand(new byte[] { });
         }        

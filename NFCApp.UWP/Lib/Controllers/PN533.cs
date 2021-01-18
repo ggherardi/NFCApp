@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,25 +15,59 @@ namespace CSharp.NFC.Controllers
         /// In order to send a direct transmit to the card, one should a combination of commands, i.e.: _reader.DirectTransmitCommand(payload:{_controller.ModuleDataExchangeCommand(DataOut:{_card.PWD_AUTH(value:{password})})})
         /// Reference: UM0801-03 (PN533 User Manual), chapter 8.4.9. InCommunicateThru, pag. 109
         /// </summary>
-        //private byte[] DataExchangeCommand { get => new byte[] { 0xD4, 0x42 }; }
-        private PN533Command _dataExchange = new PN533Command()
+        private readonly PN533Command _dataExchangeCommand = new PN533Command()
         {
-            Command = new byte[] { 0xD4, 0x42 },
-            ResponseHeader = new byte[] { 0xD5, 0x43, }
+            Bytes = new byte[] { 0xD4, 0x42 },
+            ResponseHeaderBytes = new byte[] { 0xD5, 0x43, }
         };
 
-        protected override byte[] Get_DataExchangeCommand(byte[] payload)
+        protected override NFCCommand Get_DataExchangeCommand(byte[] payload)
         {
-            byte[] command = _dataExchange.Command;
-            return command.Concat(payload).ToArray();
+            PN533Command command = new PN533Command(_dataExchangeCommand);
+            command.ConcatBytesToCommand(payload);
+            return command;
+        }
+
+        public enum ErrorMessages
+        {
+            [Description("Time Out, the target has not answered")]
+            TimeOut = 0x01,
+            [Description("A CRC Error has been detected by the CIU")]
+            CRCError = 0x02,
+            [Description("A Parity error has been detected by the CIU")]
+            PairtyError = 0x03,
+            [Description("Time Out, the target has not answered")]
+            TimeOut = 0x04,
+            [Description("Time Out, the target has not answered")]
+            TimeOut = 0x05,
+            [Description("Time Out, the target has not answered")]
+            TimeOut = 0x06,
+            [Description("Time Out, the target has not answered")]
+            TimeOut = 0x07,
+            [Description("Time Out, the target has not answered")]
+            TimeOut = 0x09
         }
     }
 
-    public class PN533Command : Command
+    public class PN533Command : NFCCommand
     {
-        //public byte[] GetPayload(byte[] responseBuffer)
-        //{
-        //    ResponseHeader
-        //}
+        public override Func<byte[], byte[]> ExtractPayload 
+        {
+            get => _extractPayload; 
+            set => base.ExtractPayload = value; 
+        }
+
+        public PN533Command(PN533Command command) : base(command) { }
+
+        public PN533Command() : base() { }
+
+        private byte[] _extractPayload(byte[] responseBuffer)
+        {
+            if(responseBuffer[0] == ResponseHeaderBytes[0] && responseBuffer[1] == ResponseHeaderBytes[1])
+            {
+                int status = responseBuffer[2];
+            }
+            return base.ExtractPayload(responseBuffer);
+        }
     }
 }
