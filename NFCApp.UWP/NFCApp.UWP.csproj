@@ -89,6 +89,9 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Lib\Controllers\NFCController.cs" />
+    <Compile Include="Lib\Controllers\PN533.cs" />
+    <Compile Include="Lib\Command.cs" />
     <Compile Include="Lib\Readers\NFCReader.cs" />
     <Compile Include="Lib\NDEF\NDEFRecord.cs" />
     <Compile Include="Lib\NDEF\NDEFRecordType.cs" />

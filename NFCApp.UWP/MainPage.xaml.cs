@@ -96,7 +96,7 @@ namespace NFCApp.UWP
         private string GetCardUID()
         {
             string cardUID;
-            ReaderResponse response = TicketValidator.GetCardGuid();
+            NFCOperation response = TicketValidator.GetCardGuid();
 
             if (response.Status == Winscard.SCARD_S_SUCCESS)
             {
@@ -116,18 +116,13 @@ namespace NFCApp.UWP
 
         private void ReadCard()
         {
-            //TicketValidator.TestError();
-            //byte[] responseBuffer = new byte[256];
-            //int bytesReturned = -1;
-            //for (int i = 0; i < 10; i++)
-            //{
-            //int status = Winscard.SCardControl(_connectedCard.CardNumber, Winscard.SCARD_CTL_CODE(3500), ref ACR122.GetGreenBlinking(1)[0], ACR122.GetGreenBlinking().Length, ref responseBuffer[0], responseBuffer.Length, ref bytesReturned);
-            //}
+            NFCOperation response = TicketValidator.GetCardVersion();
+
             WriteMessageAsync(txtRead, string.Empty);
             WriteMessageAsync(txtReadBlocks, string.Empty);
             string inputBlock = txtInputBlock.Text;
-            ReaderResponse readValueResponse = TicketValidator.ReadValue((byte)int.Parse(inputBlock));
-            ReaderResponse readBlocksResponse = TicketValidator.ReadBlocks((byte)int.Parse(inputBlock));
+            NFCOperation readValueResponse = TicketValidator.ReadValue((byte)int.Parse(inputBlock));
+            NFCOperation readBlocksResponse = TicketValidator.ReadBlocks((byte)int.Parse(inputBlock));
             if (readBlocksResponse.Status == Winscard.SCARD_S_SUCCESS)
             {
                 int i = 0;
@@ -149,13 +144,13 @@ namespace NFCApp.UWP
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.ASCII.GetString(readBlocksResponse.ResponseBuffer));
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.UTF8.GetString(readBlocksResponse.ResponseBuffer));
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.Unicode.GetString(readBlocksResponse.ResponseBuffer));
-                ReaderResponse testResponse = TicketValidator.TestOperation();
+                NFCOperation testResponse = TicketValidator.TestOperation();
             }
         }
 
         private void btnTestOperation_Click(object sender, RoutedEventArgs e)
         {
-            ReaderResponse response = TicketValidator.TestOperation();
+            NFCOperation response = TicketValidator.TestOperation();
             TicketValidator.WriteNDEFMessage(txtInput.Text);            
         }
 

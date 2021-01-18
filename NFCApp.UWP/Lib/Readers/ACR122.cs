@@ -11,12 +11,6 @@ namespace CSharp.NFC.Readers
     public class ACR122 : NFCReader, IReaderSignalControl
     {
         /// <summary>
-        /// Class: 0xFF (1 byte) - Instruction: 0xCA (1 byte) - Data out [] (n bytes)
-        /// Reference: UM0801-03 (PN533 User Manual), chapter 8.4.9. InCommunicateThru, pag. 109
-        /// </summary>
-        private byte[] ModuleDataExchangeCommand { get => new byte[] { 0xD4, 0x42, 0x00 }; }
-
-        /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xCA (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Le: 0x00 (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 4.1. Get Data, pag. 11
         /// </summary>
@@ -36,31 +30,26 @@ namespace CSharp.NFC.Readers
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xB1 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Le: 0x04 (1 byte)
-        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.1. Load Authentication Keys, pag. 12
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.5.2. Read Value Block, pag. 19
         /// </summary>
         private byte[] ReadValueBlockCommand { get => new byte[] { 0xFF, 0xB1, 0x00, 0x00, 0x04 }; }
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xD6 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Lc: {numberOfBytesToUpdate} (1 byte) - Data In: {dataIn} (4 bytes)
-        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.3. Update Binary Blocks, pag. 17
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.4. Update Binary Blocks, pag. 17
         /// </summary>
         private byte[] UpdateBinaryBlockCommand { get => new byte[] { 0xFF, 0xD6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; }
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0x00 (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Lc: {payloadLength} (1 byte) - Data In: {payload} (payload.length bytes, max 255 bytes)
-        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.1. Load Authentication Keys, pag. 12
+        /// Reference: ACR122U Application Programming Interface V2.04, chapter: 6.1. Direct Transmit, pag. 21
         /// </summary>
-        private byte[] DirectTransmitCommand { get => new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00 }; }
+        private byte[] DirectTransmitCommand { get => new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00 }; }
 
 
         public ACR122(SmartCardReader reader) : base(reader) { }
 
         public ACR122() : base() { }
-
-        protected override byte[] Get_ModuleDataExchangeCommand()
-        {
-            throw new NotImplementedException();
-        }
 
         protected override byte[] Get_GetUIDCommand()
         {
@@ -102,9 +91,8 @@ namespace CSharp.NFC.Readers
         protected override byte[] Get_DirectTransmitCommand(byte[] payload)
         {
             byte[] command = DirectTransmitCommand;
-            command.SetValue(payload.Length, 4);
-            command.SetValue(payload, 5);
-            return command;
+            command.SetValue((byte)payload.Length, 4);            
+            return command.Concat(payload).ToArray();
         }
 
         #region Signaling
