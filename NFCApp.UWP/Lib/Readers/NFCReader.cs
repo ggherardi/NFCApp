@@ -108,37 +108,56 @@ namespace CSharp.NFC.Readers
         #region Commands
         public NFCOperation Control(byte[] command, uint controlCode, int responseBufferLength = 255)
         {
-            NFCOperation response = new NFCOperation();
+            NFCOperation operation = new NFCOperation();
 
             try
             {
                 byte[] responseBuffer = new byte[responseBufferLength];
                 int responseLength = responseBuffer.Length;
-                response.Status = Winscard.SCardControl(ConnectedCard.CardNumber, Winscard.SCARD_CTL_CODE(3500), ref command[0], command.Length, ref responseBuffer[0], responseBuffer.Length, ref responseLength);
+                operation.Status = Winscard.SCardControl(ConnectedCard.CardNumber, Winscard.SCARD_CTL_CODE(3500), ref command[0], command.Length, ref responseBuffer[0], responseBuffer.Length, ref responseLength);
             }
             catch(Exception ex)
             {
                 ManageException(ex);
             }
-            return response;
+            return operation;
         }
 
         public NFCOperation Transmit(byte[] command, int responseBufferLength = 255)
         {
-            NFCOperation response = new NFCOperation();
+            NFCOperation operation = new NFCOperation();
             try
             {
                 byte[] responseBuffer = new byte[responseBufferLength];
                 int responseLength = responseBuffer.Length;
-                response.Status = Winscard.SCardTransmit(_connectedCard.CardNumber, ref _standardRequest, ref command[0], command.Length, ref _standardRequest, ref responseBuffer[0], ref responseLength);
-                response.ResponseBuffer = responseBuffer;
+                operation.Status = Winscard.SCardTransmit(_connectedCard.CardNumber, ref _standardRequest, ref command[0], command.Length, ref _standardRequest, ref responseBuffer[0], ref responseLength);
+                operation.ResponseBuffer = responseBuffer;
+                operation.ElaborateResponse();
             }
             catch(Exception ex)
             {
                 ManageException(ex);
             }
-            return response;
+            return operation;
         }
+
+        //public NFCOperation Transmit(byte[] command, int responseBufferLength = 255)
+        //{
+        //    NFCOperation operation = new NFCOperation();
+        //    try
+        //    {
+        //        byte[] responseBuffer = new byte[responseBufferLength];
+        //        int responseLength = responseBuffer.Length;
+        //        operation.Status = Winscard.SCardTransmit(_connectedCard.CardNumber, ref _standardRequest, ref command[0], command.Length, ref _standardRequest, ref responseBuffer[0], ref responseLength);
+        //        operation.ResponseBuffer = responseBuffer;
+        //        operation.ElaborateResponse();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ManageException(ex);
+        //    }
+        //    return operation;
+        //}
 
         public NFCOperation GetCardGuid()
         {
@@ -201,36 +220,36 @@ namespace CSharp.NFC.Readers
 
         public NFCOperation PasswordAuthentication(string password)
         {
-            NFCOperation response = new NFCOperation();
+            NFCOperation operation = null;
             try
             {
                 NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
                 byte[] passwordAuthenticationCommand = _connectedCard.GetPasswordAuthenticationCommand(password);
                 byte[] directTransmitCommand = Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(passwordAuthenticationCommand).ToArray());
-                response = TransmitCardCommand(directTransmitCommand);
+                operation = TransmitCardCommand(directTransmitCommand);                
             }   
             catch(Exception ex)
             {
                 ManageException(ex);
             }
-            return response;
+            return operation;
         }
 
         public NFCOperation GetCardVersion()
         {
-            NFCOperation response = new NFCOperation();
+            NFCOperation operation = null;
             try
             {
                 NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
                 byte[] getVersionCommand = _connectedCard.GetGetVersionCommand();
                 byte[] directTransmitCommand = Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(getVersionCommand).ToArray());
-                response = TransmitCardCommand(directTransmitCommand);
+                operation = TransmitCardCommand(directTransmitCommand);
             }
             catch(Exception ex)
             {
                 ManageException(ex);
             }
-            return response;
+            return operation;
         }
 
         public NFCOperation TestOperation()

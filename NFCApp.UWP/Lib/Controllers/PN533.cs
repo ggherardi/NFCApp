@@ -21,14 +21,12 @@ namespace CSharp.NFC.Controllers
             ResponseHeaderBytes = new byte[] { 0xD5, 0x43, }
         };
 
-        protected override NFCCommand Get_DataExchangeCommand(byte[] payload)
-        {
-            PN533Command command = new PN533Command(_dataExchangeCommand);
-            command.ConcatBytesToCommand(payload);
-            return command;
-        }
 
-        public enum ErrorMessages
+        /// <summary>
+        /// Controller errors
+        /// Reference: UM0801-03 (PN533 User Manual), chapter 8.1. Error Handling, pag. 50
+        /// </summary>
+        public enum Status
         {
             [Description("Time Out, the target has not answered")]
             TimeOut = 0x01,
@@ -36,16 +34,63 @@ namespace CSharp.NFC.Controllers
             CRCError = 0x02,
             [Description("A Parity error has been detected by the CIU")]
             PairtyError = 0x03,
-            [Description("Time Out, the target has not answered")]
-            TimeOut = 0x04,
-            [Description("Time Out, the target has not answered")]
-            TimeOut = 0x05,
-            [Description("Time Out, the target has not answered")]
-            TimeOut = 0x06,
-            [Description("Time Out, the target has not answered")]
-            TimeOut = 0x07,
-            [Description("Time Out, the target has not answered")]
-            TimeOut = 0x09
+            [Description("During an anti-collision/select operation an erroneous Bit Count has been detected")]
+            BitCountError = 0x04,
+            [Description("Framing error during MIFARE operation")]
+            MIFAREFramingError = 0x05,
+            [Description("An abnormal bit-collision has been detected during bit wise anti-collision at 106 kbps")]
+            BitCollision = 0x06,
+            [Description("Communication buffer size insufficient")]
+            CommunicationBufferSizeInsufficient = 0x07,
+            [Description("RF Buffer overflow has been detected by the CIU")]
+            RFBufferOverflow = 0x09,
+            [Description("In active communication mode, the RF field has not been switched on in time by the counterpart")]
+            LateRFFieldSwitching = 0x0A,
+            [Description("RF Protocol Error")]
+            RFProtocolError = 0x0B,
+            [Description("Temperature error: the interal temperature sensor has detected overhating")]
+            OverheatingError = 0x0D,
+            [Description("Internal buffer overflow")]
+            InternalBufferOverflow = 0x0E,
+            [Description("Invalid parameter (range, format, ...)")]
+            InvalidParameter = 0x10,
+            [Description("DEP Protocol: the PN533 configured in target mode does not support the command received from the initiator")]
+            CommandNotSupported = 0x12,
+            [Description("DEP Protocol, MIFARE or ISO/IEC14443-4: the data format does not match to the specification")]
+            DataFormatError = 0x13,
+            [Description("MIFARE: authentication error")]
+            MIFAREAuthError = 0x14,
+            [Description("Target or Initiator does not support NFC Secure")]
+            NFCSecureNotSupported = 0x18,
+            [Description("I2C bus line is Busy. A TDA transaction is on going")]
+            BusLineBusy = 0x19,
+            [Description("ISO/IEC14443-4: UID Check byte is wrong")]
+            UIDCheckByteError = 0x23,
+            [Description("DEP Protocol: invalid device state, the system is in a state which does not allow operation")]
+            InvalidDeviceState = 0x25,
+            [Description("Operation not allowed in this configuration (host controller interface)")]
+            OperationNotAllowed = 0x26,
+            [Description("This command is not acceptable due to the current context of the PN553")]
+            CommandNotAcceptable = 0x27,
+            [Description("The PN553 configured as target has been released by the initiator")]
+            DeviceReleasedError = 0x29,
+            [Description("PN553 and ISO/IEC14443-3B only: the ID of the card does not match, meaning that the expected card has been exchanged with another one")]
+            CardIDMismatch = 0x2A,
+            [Description("PN553 and ISO/IEC14443-3B only: the card previously activated has disappeared")]
+            CardDisappearedError = 0x2B,
+            [Description("Mismatch between the NFCID3 initiator and the NFCID3 target in DEP 212/424 kbps passive")]
+            InitiatorMismatch = 0x2C,
+            [Description("An over-current event has been detected")]
+            OverCurrentError = 0x2D,
+            [Description("NAD missing in DEP frame")]
+            NADMissingError = 0x2E
+        }
+
+        protected override NFCCommand Get_DataExchangeCommand(byte[] payload)
+        {
+            PN533Command command = new PN533Command(_dataExchangeCommand);
+            command.ConcatBytesToCommand(payload);
+            return command;
         }
     }
 
@@ -63,11 +108,21 @@ namespace CSharp.NFC.Controllers
 
         private byte[] _extractPayload(byte[] responseBuffer)
         {
+            byte[] payload = new byte[] { };
             if(responseBuffer[0] == ResponseHeaderBytes[0] && responseBuffer[1] == ResponseHeaderBytes[1])
             {
-                int status = responseBuffer[2];
+                int responseStatusByte = responseBuffer[2];
+                PN533.Status responseStatus = (PN533.Status)responseStatusByte;
+                CommandStatus.Status = $"{responseStatus} {responseStatusByte}";
+                CommandStatus.Message = Utility.GetEnumDescription(responseStatus);
+                responseBuffer.CopyTo(payload, 3);
             }
-            return base.ExtractPayload(responseBuffer);
+            else
+            {
+                CommandStatus.Status = $"GenericError";
+                CommandStatus.Message = "Header mismatch in response buffer";
+            }
+            return payload;
         }
     }
 }

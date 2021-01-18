@@ -15,6 +15,10 @@ namespace CSharp.NFC.Readers
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 4.1. Get Data, pag. 11
         /// </summary>
         private byte[] GetUIDCommand { get => new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 }; }
+        private ACR122Command UIDCommand = new ACR122Command()
+        {
+            Bytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 }
+        };
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0x82 (1 byte) - P1: 0x00 (Key Structure) (1 byte) - P2: 0x00 (Key Number) (1 byte) - Le: 0x06 (1 byte) - Data In: {key} (6 bytes)
@@ -211,5 +215,10 @@ namespace CSharp.NFC.Readers
             }
             #endregion
         }
+    }
+
+    public class ACR122Command : NFCCommand
+    {
+
     }
 }

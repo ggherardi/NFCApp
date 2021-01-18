@@ -17,7 +17,7 @@ namespace CSharp.NFC
         {
             Bytes = commandBytes;
             ResponseHeaderBytes = responseHeaderBytes;
-            CommandStatus = NFCCommandStatus.Ready;
+            CommandStatus = new NFCCommandStatus() { };
         }
 
         public NFCCommand(NFCCommand command) : this(command.Bytes, command.ResponseHeaderBytes) { }
@@ -30,10 +30,9 @@ namespace CSharp.NFC
         }
     }
 
-    public enum NFCCommandStatus
+    public class NFCCommandStatus
     {
-        Success,
-        Error,
-        Ready
+        public string Status { get; set; }
+        public string Message { get; set; }
     }
 }
