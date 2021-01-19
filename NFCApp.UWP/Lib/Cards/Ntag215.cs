@@ -28,12 +28,12 @@ namespace CSharp.NFC.Cards
         /// Response | 0x00 (1 byte), {vendorID} (1 byte), {productType} (1 byte), {productSubtype} (1 byte), {majorProductVersion} (1 byte), {minorProductVersion} (1 byte), {storageSize} (1 byte), {procotolType} (1 byte)
         /// Reference: NTAG213/215/216, chapter: 10.1. GET_VERSION, pag. 34
         /// </summary>
-        private Lazy<Ntag215Command> _lazy_GET_VERSION = new Lazy<Ntag215Command>(() =>
+        private readonly Lazy<Ntag215Command> _lazyGET_VERSION = new Lazy<Ntag215Command>(() =>
         {
             Ntag215Command command = new Ntag215Command()
             {
                 Bytes = new byte[] { 0x60 },
-                ResponseHeaderBytes = new byte[] { 0x00, 0x04, 0x04, 0x02, 0x01, 0x00, 0x0F, 0x03 },
+                Response = new NFCCommandResponse() { HeaderBytes = new byte[] { 0x00 }, MinBufferLength = 8 }
             };
             command.ExtractPayload = (responseBuffer) =>
             {
@@ -41,10 +41,9 @@ namespace CSharp.NFC.Cards
                 byte storageSizeByte = responseBuffer[6];
                 string cardType = string.Empty;
 
-                if (responseBuffer[0] != command.ResponseHeaderBytes[0])
+                if (responseBuffer[0] != command.Response.HeaderBytes[0])
                 {
-                    command.CommandStatus.Result = NFCCommandStatus.Status.HeaderMismatch.ToString();
-                    command.CommandStatus.Message = Utility.GetEnumDescription(NFCCommandStatus.Status.HeaderMismatch);
+                    command.Response.SetCommandStatus(NFCCommandStatus.Status.HeaderMismatch);
                 }
                 Array.Copy(responseBuffer, 1, payloadBytes, 0, responseBuffer.Length - 1);
 
@@ -66,7 +65,7 @@ namespace CSharp.NFC.Cards
             };
             return command;
         });
-        private Ntag215Command GET_VERSION { get => _lazy_GET_VERSION.Value; }
+        private Ntag215Command GET_VERSION { get => _lazyGET_VERSION.Value; }
         #endregion
 
         #region Constructors

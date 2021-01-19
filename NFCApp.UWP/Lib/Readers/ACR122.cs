@@ -14,6 +14,10 @@ namespace CSharp.NFC.Readers
         /// Class: 0xFF (1 byte) - Instruction: 0xCA (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Le: 0x00 (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 4.1. Get Data, pag. 11
         /// </summary>
+        private Lazy<ACR122Command> _lazyGetUID = new Lazy<ACR122Command>(() => 
+        {
+            return new ACR122Command();
+        });
         private ACR122Command GetUID = new ACR122Command()
         {
             Bytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 }

@@ -11,12 +11,15 @@ namespace CSharp.NFC
         private readonly NFCCommand _readerCommand;
         private readonly NFCCommand _controllerCommand;
         private readonly NFCCommand _cardCommand;
-        private byte[] _wrappedCommand;
+        private readonly byte[] _wrappedCommand;
 
         public byte[] WrappedCommand { get => _wrappedCommand; }
         public byte[] ResponseBuffer { get; set; }
         public byte[] ResponsePayloadBuffer { get; set; }
         public string ResponsePayloadText { get; set; }
+        public NFCCommand ReaderCommand { get => _readerCommand; }
+        public NFCCommand ControllerCommand { get => _controllerCommand; }
+        public NFCCommand CardCommand { get => _cardCommand; }
         public int Status { get; set; }
         private NFCOperationType OperationType { get; set; } 
 

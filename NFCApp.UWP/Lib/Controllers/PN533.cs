@@ -18,7 +18,7 @@ namespace CSharp.NFC.Controllers
         private readonly PN533Command _dataExchangeCommand = new PN533Command()
         {
             Bytes = new byte[] { 0xD4, 0x42 },
-            ResponseHeaderBytes = new byte[] { 0xD5, 0x43, }
+            Response = new NFCCommandResponse() { HeaderBytes = new byte[] { 0xD5, 0x43, }, MinBufferLength = 3 }
         };
 
 
@@ -98,12 +98,6 @@ namespace CSharp.NFC.Controllers
 
     public class PN533Command : NFCCommand
     {
-        //public override Func<byte[], NFCPayload> ExtractPayload 
-        //{
-        //    get => _extractPayload;
-        //    set => base.ExtractPayload = value; 
-        //}
-
         public PN533Command(PN533Command commandToClone) : base(commandToClone) 
         {
             ExtractPayload = _extractPayload;
@@ -115,9 +109,9 @@ namespace CSharp.NFC.Controllers
         {
             byte[] payload = new byte[responseBuffer.Length];
             bool isHeaderCorrect = true;
-            for(int i = 0; i < ResponseHeaderBytes.Length; i++)
+            for(int i = 0; i < Response.HeaderBytes.Length; i++)
             {
-                if(responseBuffer[i] != ResponseHeaderBytes[i])
+                if(responseBuffer[i] != Response.HeaderBytes[i])
                 {
                     isHeaderCorrect = false;
                 }
@@ -126,14 +120,12 @@ namespace CSharp.NFC.Controllers
             {
                 int responseStatusByte = responseBuffer[2];
                 PN533.Status responseStatus = (PN533.Status)responseStatusByte;
-                CommandStatus.Result = $"{responseStatus} {responseStatusByte}";
-                CommandStatus.Message = Utility.GetEnumDescription(responseStatus);
+                Response.SetCommandSuccessful(responseStatusByte, Utility.GetEnumDescription(responseStatus));
                 Array.Copy(responseBuffer, 3, payload, 0, responseBuffer.Length - 3);
             }
             else
             {
-                CommandStatus.Result = NFCCommandStatus.Status.HeaderMismatch.ToString();
-                CommandStatus.Message = Utility.GetEnumDescription(NFCCommandStatus.Status.HeaderMismatch);
+                Response.SetCommandFailure((int)NFCCommandStatus.Status.HeaderMismatch, Utility.GetEnumDescription(NFCCommandStatus.Status.HeaderMismatch));
             }
             return new NFCPayload(payload);
         }

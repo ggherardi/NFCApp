@@ -96,7 +96,7 @@ namespace CSharp.NFC.Readers
 
             if (operation.Status == Winscard.SCARD_S_SUCCESS)
             {
-                // GG: Add code here to identify the card
+                // Add code here to identify the card
                 _connectedCard = NFCCard.CardHelper.GetCard<Ntag215>(cardInt);
             }
             else
@@ -117,24 +117,6 @@ namespace CSharp.NFC.Readers
                 byte[] responseBuffer = new byte[responseBufferLength];
                 int responseLength = responseBuffer.Length;
                 operation.Status = Winscard.SCardControl(ConnectedCard.CardNumber, Winscard.SCARD_CTL_CODE(3500), ref command[0], command.Length, ref responseBuffer[0], responseBuffer.Length, ref responseLength);
-            }
-            catch(Exception ex)
-            {
-                ManageException(ex);
-            }
-            return operation;
-        }
-
-        public NFCOperation Transmit(byte[] command, int responseBufferLength = 255)
-        {
-            NFCOperation operation = new NFCOperation();
-            try
-            {
-                byte[] responseBuffer = new byte[responseBufferLength];
-                int responseLength = responseBuffer.Length;
-                operation.Status = Winscard.SCardTransmit(_connectedCard.CardNumber, ref _standardRequest, ref command[0], command.Length, ref _standardRequest, ref responseBuffer[0], ref responseLength);
-                operation.ResponseBuffer = responseBuffer;
-                operation.ElaborateResponse();
             }
             catch(Exception ex)
             {
@@ -253,12 +235,6 @@ namespace CSharp.NFC.Readers
                 ManageException(ex);
             }
             return operation;
-        }
-
-        public NFCOperation TestOperation()
-        {
-            //return Transmit(new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x04, 0xD4, 0x4A, 0x01, 0x00 }); POLLING: pag. 26 API-ACR122USAM-2.01.pdf
-            return Transmit(new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x05, 0xD4, 0x40, 0x01, 0x30, 0x04 });
         }
         #endregion
 

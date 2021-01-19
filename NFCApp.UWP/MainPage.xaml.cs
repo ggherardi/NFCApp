@@ -114,9 +114,7 @@ namespace NFCApp.UWP
         }
 
         private void ReadCard()
-        {
-            NFCOperation response = TicketValidator.GetCardVersion();
-
+        {                        
             WriteMessageAsync(txtRead, string.Empty);
             WriteMessageAsync(txtReadBlocks, string.Empty);
             string inputBlock = txtInputBlock.Text;
@@ -143,14 +141,15 @@ namespace NFCApp.UWP
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.ASCII.GetString(readBlocksResponse.ResponseBuffer));
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.UTF8.GetString(readBlocksResponse.ResponseBuffer));
                 AppendMessageAsync(txtReadBlocks, System.Text.Encoding.Unicode.GetString(readBlocksResponse.ResponseBuffer));
-                NFCOperation testResponse = TicketValidator.TestOperation();
             }
         }
 
         private void btnTestOperation_Click(object sender, RoutedEventArgs e)
         {
-            NFCOperation response = TicketValidator.TestOperation();
-            TicketValidator.WriteNDEFMessage(txtInput.Text);            
+            //NFCOperation response = TicketValidator.TestOperation();
+            NFCOperation operation = TicketValidator.GetCardVersion();
+            //WriteMessageAsync(txtTestOperation, !string.IsNullOrEmpty(operation.ResponsePayloadText));
+            //TicketValidator.WriteNDEFMessage(txtInput.Text);            
         }
 
         #region AuxMethods
