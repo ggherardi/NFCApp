@@ -13,11 +13,15 @@ namespace CSharp.NFC
         public static string GetEnumDescription(Enum value)
         {
             string description = string.Empty;
-            FieldInfo fieldInfo = value.GetType().GetField(value.ToString());
-            DescriptionAttribute attribute = fieldInfo.GetCustomAttribute<DescriptionAttribute>();
-            if(attribute != null)
+            string valueAsString = value.ToString();
+            if (!string.IsNullOrEmpty(valueAsString))
             {
-                description = attribute.Description;
+                FieldInfo fieldInfo = value.GetType().GetField(valueAsString);
+                DescriptionAttribute attribute = fieldInfo.GetCustomAttribute<DescriptionAttribute>();
+                if (attribute != null)
+                {
+                    description = attribute.Description;
+                }
             }
             return description;
         }

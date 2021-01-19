@@ -20,7 +20,7 @@ namespace CSharp.NFC
             CommandStatus = new NFCCommandStatus() { };
         }
 
-        public NFCCommand(NFCCommand command) : this(command.Bytes, command.ResponseHeaderBytes) { }
+        public NFCCommand(NFCCommand commandToClone) : this(commandToClone.Bytes, commandToClone.ResponseHeaderBytes) { }
 
         public NFCCommand() : this(new byte[] { }, new byte[] { }) { }
 

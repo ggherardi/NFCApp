@@ -14,8 +14,7 @@ namespace CSharp.NFC.Readers
         /// Class: 0xFF (1 byte) - Instruction: 0xCA (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Le: 0x00 (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 4.1. Get Data, pag. 11
         /// </summary>
-        private byte[] GetUIDCommand { get => new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 }; }
-        private ACR122Command UIDCommand = new ACR122Command()
+        private ACR122Command GetUID = new ACR122Command()
         {
             Bytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 }
         };
@@ -24,79 +23,94 @@ namespace CSharp.NFC.Readers
         /// Class: 0xFF (1 byte) - Instruction: 0x82 (1 byte) - P1: 0x00 (Key Structure) (1 byte) - P2: 0x00 (Key Number) (1 byte) - Le: 0x06 (1 byte) - Data In: {key} (6 bytes)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.1. Load Authentication Keys, pag. 12
         /// </summary>
-        private byte[] LoadAuthenticationKeysCommand { get => new byte[] { 0xFF, 0x82, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; }
+        private ACR122Command LoadAuthenticationKeysCommand = new ACR122Command()
+        {
+            Bytes = new byte[] { 0xFF, 0x82, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+        };
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xB0 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Le: {numberOfBytesToRead: max 16 bytes} (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.3. Read Binary Blocks, pag. 16
         /// </summary>
-        private byte[] ReadBinaryBlocksCommand { get => new byte[] { 0xFF, 0xB0, 0x00, 0x00, 0x00 }; }
+        private ACR122Command ReadBinaryBlocksCommand = new ACR122Command()
+        {
+            Bytes = new byte[] { 0xFF, 0xB0, 0x00, 0x00, 0x00 }
+        };
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xB1 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Le: 0x04 (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.5.2. Read Value Block, pag. 19
         /// </summary>
-        private byte[] ReadValueBlockCommand { get => new byte[] { 0xFF, 0xB1, 0x00, 0x00, 0x04 }; }
+        private ACR122Command ReadValueBlockCommand = new ACR122Command()
+        {
+            Bytes = new byte[] { 0xFF, 0xB1, 0x00, 0x00, 0x04 }
+        };
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xD6 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Lc: {numberOfBytesToUpdate} (1 byte) - Data In: {dataIn} (4 bytes)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.4. Update Binary Blocks, pag. 17
         /// </summary>
-        private byte[] UpdateBinaryBlockCommand { get => new byte[] { 0xFF, 0xD6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; }
+        private ACR122Command UpdateBinaryBlockCommand = new ACR122Command()
+        {
+            Bytes = new byte[] { 0xFF, 0xD6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+        };
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0x00 (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Lc: {payloadLength} (1 byte) - Data In: {payload} (payload.length bytes, max 255 bytes)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 6.1. Direct Transmit, pag. 21
         /// </summary>
-        private byte[] DirectTransmitCommand { get => new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00 }; }
-
+        private ACR122Command DirectTransmitCommand = new ACR122Command()
+        {
+            Bytes = new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00 }
+        };
 
         public ACR122(SmartCardReader reader) : base(reader) { }
 
         public ACR122() : base() { }
 
-        protected override byte[] Get_GetUIDCommand()
+        protected override NFCCommand Get_GetUIDCommand()
         {
-            return GetUIDCommand;
+            return new ACR122Command(GetUID);
         }
 
-        protected override byte[] Get_LoadAuthenticationKeysCommand()
+        protected override NFCCommand Get_LoadAuthenticationKeysCommand()
         {
-            return LoadAuthenticationKeysCommand;
+            return new ACR122Command(LoadAuthenticationKeysCommand);
         }
 
-        protected override byte[] Get_ReadBinaryBlocksCommand(byte blockNumber, int numberOfBytesToRead)
+        protected override NFCCommand Get_ReadBinaryBlocksCommand(byte blockNumber, int numberOfBytesToRead)
         {
-            byte[] command = ReadBinaryBlocksCommand;
-            command.SetValue(blockNumber, 3);
-            command.SetValue((byte)numberOfBytesToRead, 4);
+            ACR122Command command = new ACR122Command(ReadBinaryBlocksCommand);
+            command.Bytes.SetValue(blockNumber, 3);
+            command.Bytes.SetValue((byte)numberOfBytesToRead, 4);
             return command;
         }
 
-        protected override byte[] Get_ReadValueBlockCommand(byte blockNumber)
+        protected override NFCCommand Get_ReadValueBlockCommand(byte blockNumber)
         {
-            byte[] command = ReadValueBlockCommand;
-            command.SetValue(blockNumber, 3);
+            ACR122Command command =  ReadValueBlockCommand;
+            command.Bytes.SetValue(blockNumber, 3);
             return command;
         }
 
-        protected override byte[] Get_UpdateBinaryBlockCommand(byte blockNumber, byte[] dataIn, int numberOfBytesToUpdate = 4)
+        protected override NFCCommand Get_UpdateBinaryBlockCommand(byte blockNumber, byte[] dataIn, int numberOfBytesToUpdate = 4)
         {
-            byte[] command = UpdateBinaryBlockCommand;
-            command.SetValue(blockNumber, 3);
-            command.SetValue((byte)numberOfBytesToUpdate, 4);
+            ACR122Command command = new ACR122Command(UpdateBinaryBlockCommand);
+            command.Bytes.SetValue(blockNumber, 3);
+            command.Bytes.SetValue((byte)numberOfBytesToUpdate, 4);
             for (int i = 0; i < dataIn.Length; i++)
             {
-                command.SetValue(dataIn[i], i + 5);
+                command.Bytes.SetValue(dataIn[i], i + 5);
             }
             return command;
         }
 
-        protected override byte[] Get_DirectTransmitCommand(byte[] payload)
+        protected override NFCCommand Get_DirectTransmitCommand(byte[] payload)
         {
-            byte[] command = DirectTransmitCommand;
-            command.SetValue((byte)payload.Length, 4);            
-            return command.Concat(payload).ToArray();
+            ACR122Command command = new ACR122Command(DirectTransmitCommand);
+            command.Bytes.SetValue((byte)payload.Length, 4);
+            command.Bytes = command.Bytes.Concat(payload).ToArray();
+            return command;
         }
 
         #region Signaling
@@ -219,6 +233,7 @@ namespace CSharp.NFC.Readers
 
     public class ACR122Command : NFCCommand
     {
-
+        public ACR122Command(ACR122Command commandToClone) : base(commandToClone) { }
+        public ACR122Command() : base() { }
     }
 }

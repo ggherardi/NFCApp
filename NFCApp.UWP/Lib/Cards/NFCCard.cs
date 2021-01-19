@@ -18,18 +18,18 @@ namespace CSharp.NFC.Cards
 
         public NFCCard() { }
 
-        protected abstract byte[] Get_PWD_AUTH_Command(string password);
-        protected abstract byte[] Get_GET_VERSION_Command();
+        protected abstract NFCCommand Get_PWD_AUTH_Command(string password);
+        protected abstract NFCCommand Get_GET_VERSION_Command();
 
         public abstract int MaxWritableBlocks { get; protected set; }
         public abstract int MaxReadableBytes { get; protected set; }
 
-        public byte[] GetPasswordAuthenticationCommand(string password)
+        public NFCCommand GetPasswordAuthenticationCommand(string password)
         {
             return Get_PWD_AUTH_Command(password);
         }
 
-        public byte[] GetGetVersionCommand()
+        public NFCCommand GetGetVersionCommand()
         {
             return Get_GET_VERSION_Command();
         }

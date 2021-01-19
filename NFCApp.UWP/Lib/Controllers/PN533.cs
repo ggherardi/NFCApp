@@ -28,6 +28,8 @@ namespace CSharp.NFC.Controllers
         /// </summary>
         public enum Status
         {
+            [Description("Operation successful")]
+            Success = 0x00,
             [Description("Time Out, the target has not answered")]
             TimeOut = 0x01,
             [Description("A CRC Error has been detected by the CIU")]
@@ -102,20 +104,20 @@ namespace CSharp.NFC.Controllers
             set => base.ExtractPayload = value; 
         }
 
-        public PN533Command(PN533Command command) : base(command) { }
+        public PN533Command(PN533Command commandToClone) : base(commandToClone) { }
 
         public PN533Command() : base() { }
 
         private byte[] _extractPayload(byte[] responseBuffer)
         {
-            byte[] payload = new byte[] { };
+            byte[] payload = new byte[responseBuffer.Length];
             if(responseBuffer[0] == ResponseHeaderBytes[0] && responseBuffer[1] == ResponseHeaderBytes[1])
             {
                 int responseStatusByte = responseBuffer[2];
                 PN533.Status responseStatus = (PN533.Status)responseStatusByte;
                 CommandStatus.Status = $"{responseStatus} {responseStatusByte}";
                 CommandStatus.Message = Utility.GetEnumDescription(responseStatus);
-                responseBuffer.CopyTo(payload, 3);
+                Array.Copy(responseBuffer, 3, payload, 0, responseBuffer.Length - 3);
             }
             else
             {

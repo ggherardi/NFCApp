@@ -21,8 +21,9 @@ namespace CSharp.NFC.Readers
         private int _hContext;
         private int _protocol;
         private NFCController _controller;
-        private SmartCardReader _builtinReader;
+        private NFCReader _reader;
         private NFCCard _connectedCard;
+        private SmartCardReader _builtinReader;
         private IReaderSignalControl _signalingControl;
         #endregion
 
@@ -51,6 +52,7 @@ namespace CSharp.NFC.Readers
                 _readerState.RdrName = reader.Name;
                 _signalingControl = this as IReaderSignalControl;
                 _controller = controller;
+                _reader = this;
                 int retCode = Winscard.SCardEstablishContext(Winscard.SCARD_SCOPE_SYSTEM, 0, 0, ref _hContext);
                 if (retCode != Winscard.SCARD_S_SUCCESS)
                 {
@@ -76,12 +78,12 @@ namespace CSharp.NFC.Readers
         #endregion
 
         #region Abstraction
-        protected abstract byte[] Get_GetUIDCommand();
-        protected abstract byte[] Get_LoadAuthenticationKeysCommand();
-        protected abstract byte[] Get_ReadBinaryBlocksCommand(byte startingBlock, int length);
-        protected abstract byte[] Get_ReadValueBlockCommand(byte block);
-        protected abstract byte[] Get_UpdateBinaryBlockCommand(byte blockNumber, byte[] blockData, int numberOfBytesToUpdate);
-        protected abstract byte[] Get_DirectTransmitCommand(byte[] payload);
+        protected abstract NFCCommand Get_GetUIDCommand();
+        protected abstract NFCCommand Get_LoadAuthenticationKeysCommand();
+        protected abstract NFCCommand Get_ReadBinaryBlocksCommand(byte startingBlock, int length);
+        protected abstract NFCCommand Get_ReadValueBlockCommand(byte block);
+        protected abstract NFCCommand Get_UpdateBinaryBlockCommand(byte blockNumber, byte[] blockData, int numberOfBytesToUpdate);
+        protected abstract NFCCommand Get_DirectTransmitCommand(byte[] payload);
         #endregion
 
         #region Card connection
@@ -141,32 +143,31 @@ namespace CSharp.NFC.Readers
             return operation;
         }
 
-        //public NFCOperation Transmit(byte[] command, int responseBufferLength = 255)
-        //{
-        //    NFCOperation operation = new NFCOperation();
-        //    try
-        //    {
-        //        byte[] responseBuffer = new byte[responseBufferLength];
-        //        int responseLength = responseBuffer.Length;
-        //        operation.Status = Winscard.SCardTransmit(_connectedCard.CardNumber, ref _standardRequest, ref command[0], command.Length, ref _standardRequest, ref responseBuffer[0], ref responseLength);
-        //        operation.ResponseBuffer = responseBuffer;
-        //        operation.ElaborateResponse();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ManageException(ex);
-        //    }
-        //    return operation;
-        //}
+        public NFCOperation Transmit(NFCOperation operation, int responseBufferLength = 255)
+        {
+            try
+            {
+                byte[] responseBuffer = new byte[responseBufferLength];
+                int responseLength = responseBuffer.Length;
+                operation.Status = Winscard.SCardTransmit(_connectedCard.CardNumber, ref _standardRequest, ref operation.WrappedCommand[0], operation.WrappedCommand.Length, ref _standardRequest, ref responseBuffer[0], ref responseLength);
+                operation.ResponseBuffer = responseBuffer;
+                operation.ElaborateResponse();
+            }
+            catch (Exception ex)
+            {
+                ManageException(ex);
+            }
+            return operation;
+        }
 
         public NFCOperation GetCardGuid()
         {
-            return Transmit(Get_GetUIDCommand());
+            return Transmit(new NFCOperation(Get_GetUIDCommand()));
         }
 
         public NFCOperation ReadBlocks(byte startingBlock, int length)
         {
-            return Transmit(Get_ReadBinaryBlocksCommand(startingBlock, length));
+            return Transmit(new NFCOperation(Get_ReadBinaryBlocksCommand(startingBlock, length)));
         }
 
         public NFCOperation ReadBlocks(byte startingBlock)
@@ -176,12 +177,12 @@ namespace CSharp.NFC.Readers
 
         public NFCOperation ReadValue(byte block)
         {
-            return Transmit(Get_ReadValueBlockCommand(block));
+            return Transmit(new NFCOperation(Get_ReadValueBlockCommand(block)));
         }
 
         public NFCOperation WriteBlocks(byte blockNumber, byte[] dataIn, int numberOfBytesToUpdate)
         {
-            return Transmit(Get_UpdateBinaryBlockCommand(blockNumber, dataIn, numberOfBytesToUpdate));
+            return Transmit(new NFCOperation(Get_UpdateBinaryBlockCommand(blockNumber, dataIn, numberOfBytesToUpdate)));
         }
 
         public NFCOperation WriteBlocks(byte blockNumber, byte[] dataIn)
@@ -213,9 +214,9 @@ namespace CSharp.NFC.Readers
             WriteNDEFMessage(value, 4);
         }
 
-        public NFCOperation TransmitCardCommand(byte[] cardCommand)
+        public NFCOperation TransmitCardCommand(NFCOperation operation)
         {
-            return Transmit(cardCommand);
+            return Transmit(operation);
         }
 
         public NFCOperation PasswordAuthentication(string password)
@@ -224,9 +225,10 @@ namespace CSharp.NFC.Readers
             try
             {
                 NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
-                byte[] passwordAuthenticationCommand = _connectedCard.GetPasswordAuthenticationCommand(password);
-                byte[] directTransmitCommand = Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(passwordAuthenticationCommand).ToArray());
-                operation = TransmitCardCommand(directTransmitCommand);                
+                NFCCommand passwordAuthenticationCommand = _connectedCard.GetPasswordAuthenticationCommand(password);
+                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(passwordAuthenticationCommand.Bytes).ToArray());
+                operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, passwordAuthenticationCommand, directTransmitCommand.Bytes);
+                operation = TransmitCardCommand(operation);                
             }   
             catch(Exception ex)
             {
@@ -241,9 +243,10 @@ namespace CSharp.NFC.Readers
             try
             {
                 NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
-                byte[] getVersionCommand = _connectedCard.GetGetVersionCommand();
-                byte[] directTransmitCommand = Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(getVersionCommand).ToArray());
-                operation = TransmitCardCommand(directTransmitCommand);
+                NFCCommand getVersionCommand = _connectedCard.GetGetVersionCommand();
+                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(getVersionCommand.Bytes).ToArray());
+                operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, getVersionCommand, directTransmitCommand.Bytes);
+                operation = TransmitCardCommand(operation);
             }
             catch(Exception ex)
             {

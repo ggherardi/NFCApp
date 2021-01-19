@@ -12,13 +12,19 @@ namespace CSharp.NFC.Cards
         /// Cmd: 0x1B (1 byte) - Pwd: {password} (4 bytes)
         /// Reference: NTAG213/215/216, chapter: 10.7. PWD_AUTH, pag. 46
         /// </summary>
-        private byte[] PWD_AUTH { get => new byte[] { 0x1B, 0x00, 0x00, 0x00, 0x00 }; }
+        private Ntag215Command PWD_AUTH = new Ntag215Command()
+        {
+            Bytes = new byte[] { 0x1B, 0x00, 0x00, 0x00, 0x00 }
+        };
 
         /// <summary>
         /// Cmd: 0x60 (1 byte)
         /// Reference: NTAG213/215/216, chapter: 10.1. GET_VERSION, pag. 34
         /// </summary>
-        private byte[] GET_VERSION { get => new byte[] { 0x60 }; }
+        private Ntag215Command GET_VERSION = new Ntag215Command()
+        {
+            Bytes = new byte[] { 0x60 }
+        };
 
         public Ntag215(IntPtr hCard) : base(hCard) { }
 
@@ -27,20 +33,26 @@ namespace CSharp.NFC.Cards
         public override int MaxWritableBlocks { get => 4; protected set => MaxWritableBlocks = value; }
         public override int MaxReadableBytes { get => 16; protected set => MaxReadableBytes = value; }
 
-        protected override byte[] Get_PWD_AUTH_Command(string password)
+        protected override NFCCommand Get_PWD_AUTH_Command(string password)
         {
-            byte[] command = PWD_AUTH;
+            Ntag215Command command = new Ntag215Command(PWD_AUTH);
             byte[] passwordBytes = Encoding.Default.GetBytes(password);
             for(int i = 0; i < 4; i++)
             {
-                command.SetValue(passwordBytes[i], i);
+                command.Bytes.SetValue(passwordBytes[i], i);
             }            
             return command;
         }
 
-        protected override byte[] Get_GET_VERSION_Command()
+        protected override NFCCommand Get_GET_VERSION_Command()
         {
-            return GET_VERSION;
+            return new NFCCommand(GET_VERSION);
         }
+    }
+
+    public class Ntag215Command : NFCCommand
+    {
+        public Ntag215Command(Ntag215Command commandToClone) : base(commandToClone) { }
+        public Ntag215Command() : base() { }
     }
 }
