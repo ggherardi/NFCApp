@@ -98,33 +98,44 @@ namespace CSharp.NFC.Controllers
 
     public class PN533Command : NFCCommand
     {
-        public override Func<byte[], byte[]> ExtractPayload 
-        {
-            get => _extractPayload; 
-            set => base.ExtractPayload = value; 
-        }
+        //public override Func<byte[], NFCPayload> ExtractPayload 
+        //{
+        //    get => _extractPayload;
+        //    set => base.ExtractPayload = value; 
+        //}
 
-        public PN533Command(PN533Command commandToClone) : base(commandToClone) { }
+        public PN533Command(PN533Command commandToClone) : base(commandToClone) 
+        {
+            ExtractPayload = _extractPayload;
+        }
 
         public PN533Command() : base() { }
 
-        private byte[] _extractPayload(byte[] responseBuffer)
+        private NFCPayload _extractPayload(byte[] responseBuffer)
         {
             byte[] payload = new byte[responseBuffer.Length];
-            if(responseBuffer[0] == ResponseHeaderBytes[0] && responseBuffer[1] == ResponseHeaderBytes[1])
+            bool isHeaderCorrect = true;
+            for(int i = 0; i < ResponseHeaderBytes.Length; i++)
+            {
+                if(responseBuffer[i] != ResponseHeaderBytes[i])
+                {
+                    isHeaderCorrect = false;
+                }
+            }
+            if(isHeaderCorrect)
             {
                 int responseStatusByte = responseBuffer[2];
                 PN533.Status responseStatus = (PN533.Status)responseStatusByte;
-                CommandStatus.Status = $"{responseStatus} {responseStatusByte}";
+                CommandStatus.Result = $"{responseStatus} {responseStatusByte}";
                 CommandStatus.Message = Utility.GetEnumDescription(responseStatus);
                 Array.Copy(responseBuffer, 3, payload, 0, responseBuffer.Length - 3);
             }
             else
             {
-                CommandStatus.Status = $"GenericError";
-                CommandStatus.Message = "Header mismatch in response buffer";
+                CommandStatus.Result = NFCCommandStatus.Status.HeaderMismatch.ToString();
+                CommandStatus.Message = Utility.GetEnumDescription(NFCCommandStatus.Status.HeaderMismatch);
             }
-            return payload;
+            return new NFCPayload(payload);
         }
     }
 }

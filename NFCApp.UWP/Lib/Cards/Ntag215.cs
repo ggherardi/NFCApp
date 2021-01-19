@@ -8,6 +8,12 @@ namespace CSharp.NFC.Cards
 {
     public class Ntag215 : NFCCard
     {
+        #region Properties
+        public override int MaxWritableBlocks { get => 4; protected set => MaxWritableBlocks = value; }
+        public override int MaxReadableBytes { get => 16; protected set => MaxReadableBytes = value; }
+        #endregion
+
+        #region Commands
         /// <summary>
         /// Cmd: 0x1B (1 byte) - Pwd: {password} (4 bytes)
         /// Reference: NTAG213/215/216, chapter: 10.7. PWD_AUTH, pag. 46
@@ -18,21 +24,58 @@ namespace CSharp.NFC.Cards
         };
 
         /// <summary>
-        /// Cmd: 0x60 (1 byte)
+        /// Input | Cmd: 0x60 (1 byte)
+        /// Response | 0x00 (1 byte), {vendorID} (1 byte), {productType} (1 byte), {productSubtype} (1 byte), {majorProductVersion} (1 byte), {minorProductVersion} (1 byte), {storageSize} (1 byte), {procotolType} (1 byte)
         /// Reference: NTAG213/215/216, chapter: 10.1. GET_VERSION, pag. 34
         /// </summary>
-        private Ntag215Command GET_VERSION = new Ntag215Command()
+        private Lazy<Ntag215Command> _lazy_GET_VERSION = new Lazy<Ntag215Command>(() =>
         {
-            Bytes = new byte[] { 0x60 }
-        };
+            Ntag215Command command = new Ntag215Command()
+            {
+                Bytes = new byte[] { 0x60 },
+                ResponseHeaderBytes = new byte[] { 0x00, 0x04, 0x04, 0x02, 0x01, 0x00, 0x0F, 0x03 },
+            };
+            command.ExtractPayload = (responseBuffer) =>
+            {
+                byte[] payloadBytes = new byte[responseBuffer.Length];
+                byte storageSizeByte = responseBuffer[6];
+                string cardType = string.Empty;
 
+                if (responseBuffer[0] != command.ResponseHeaderBytes[0])
+                {
+                    command.CommandStatus.Result = NFCCommandStatus.Status.HeaderMismatch.ToString();
+                    command.CommandStatus.Message = Utility.GetEnumDescription(NFCCommandStatus.Status.HeaderMismatch);
+                }
+                Array.Copy(responseBuffer, 1, payloadBytes, 0, responseBuffer.Length - 1);
+
+                switch (storageSizeByte)
+                {
+                    case 0x0F:
+                        cardType = "NTAG213";
+                        break;
+                    case 0x11:
+                        cardType = "NTAG215";
+                        break;
+                    case 0x13:
+                        cardType = "NTAG216";
+                        break;
+                    default: break;
+                }
+
+                return new NFCPayload(payloadBytes, cardType);
+            };
+            return command;
+        });
+        private Ntag215Command GET_VERSION { get => _lazy_GET_VERSION.Value; }
+        #endregion
+
+        #region Constructors
         public Ntag215(IntPtr hCard) : base(hCard) { }
 
         public Ntag215() : base() { }
+        #endregion
 
-        public override int MaxWritableBlocks { get => 4; protected set => MaxWritableBlocks = value; }
-        public override int MaxReadableBytes { get => 16; protected set => MaxReadableBytes = value; }
-
+        #region Implementation
         protected override NFCCommand Get_PWD_AUTH_Command(string password)
         {
             Ntag215Command command = new Ntag215Command(PWD_AUTH);
@@ -46,8 +89,10 @@ namespace CSharp.NFC.Cards
 
         protected override NFCCommand Get_GET_VERSION_Command()
         {
-            return new NFCCommand(GET_VERSION);
+            Ntag215Command get_version = GET_VERSION;
+            return get_version;
         }
+        #endregion
     }
 
     public class Ntag215Command : NFCCommand
