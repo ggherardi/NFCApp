@@ -35,7 +35,7 @@ namespace CSharp.NFC
             _controllerCommand = controllerCommand;
             _cardCommand = cardCommand;
             _wrappedCommand = wrappedCommand;
-            OperationType = NFCOperationType.CardOperation;
+            OperationType = operationType;
         }
 
         public NFCOperation(NFCCommand readerCommand) : this(readerCommand, null, null, readerCommand.Bytes, NFCOperationType.ReaderOperation) { }

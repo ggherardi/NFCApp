@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,14 +15,16 @@ namespace CSharp.NFC.Readers
         /// Class: 0xFF (1 byte) - Instruction: 0xCA (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Le: 0x00 (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 4.1. Get Data, pag. 11
         /// </summary>
-        private Lazy<ACR122Command> _lazyGetUID = new Lazy<ACR122Command>(() => 
+        private Lazy<ACR122Command> _GetUID = new Lazy<ACR122Command>(() => 
         {
-            return new ACR122Command();
+            ACR122Command command = new ACR122Command()
+            {
+                Bytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 },
+                Response = new NFCCommandResponse() { HeaderBytes = new byte[] { }, MinBufferLength = 8 }
+            };
+            return command;
         });
-        private ACR122Command GetUID = new ACR122Command()
-        {
-            Bytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 }
-        };
+        private ACR122Command GetUID { get => _GetUID.Value; }
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0x82 (1 byte) - P1: 0x00 (Key Structure) (1 byte) - P2: 0x00 (Key Number) (1 byte) - Le: 0x06 (1 byte) - Data In: {key} (6 bytes)
@@ -67,6 +70,16 @@ namespace CSharp.NFC.Readers
         {
             Bytes = new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00 }
         };
+
+        public enum Status
+        {
+            [Description("The operation completed succesfully")]
+            Success = 0x90,
+            [Description("The operation failed")]
+            Error = 0x63, 
+            [Description("Function not supported")]
+            NotSupported = 0xEB,
+        }
 
         public ACR122(SmartCardReader reader) : base(reader) { }
 
@@ -237,7 +250,43 @@ namespace CSharp.NFC.Readers
 
     public class ACR122Command : NFCCommand
     {
-        public ACR122Command(ACR122Command commandToClone) : base(commandToClone) { }
+        public ACR122Command(ACR122Command commandToClone) : base(commandToClone) { ExtractPayload = _extractPayload; }
         public ACR122Command() : base() { }
+
+        private NFCPayload _extractPayload(byte[] responseBuffer)
+        {            
+            bool isHeaderCorrect = true;
+
+            int lastByteNotZeroIndex = Utility.GetLastByteNotZeroIndex(responseBuffer);
+            int lastByteNotZero = responseBuffer[lastByteNotZeroIndex];
+            if (responseBuffer[lastByteNotZeroIndex] == 0x81)
+            {
+                lastByteNotZeroIndex--;
+                lastByteNotZero += responseBuffer[lastByteNotZeroIndex];
+            }
+            byte[] payload = new byte[lastByteNotZeroIndex];
+            ACR122.Status responseStatus = (ACR122.Status)lastByteNotZero;
+
+            if (lastByteNotZero == 0x90)
+            {
+                for (int i = 0; i < Response.HeaderBytes.Length; i++)
+                {
+                    if (responseBuffer[i] != Response.HeaderBytes[i])
+                    {
+                        isHeaderCorrect = false;
+                    }
+                }
+                if (isHeaderCorrect)
+                {
+                    Response.SetCommandSuccessful((int)responseStatus, Utility.GetEnumDescription(responseStatus));
+                }
+            }
+            else
+            {
+                Response.SetCommandFailure((int)responseStatus, Utility.GetEnumDescription(responseStatus));
+            }
+            Array.Copy(responseBuffer, 0, payload, 0, lastByteNotZeroIndex);
+            return new NFCPayload(payload);
+        }
     }
 }

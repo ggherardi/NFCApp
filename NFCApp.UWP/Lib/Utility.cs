@@ -25,5 +25,17 @@ namespace CSharp.NFC
             }
             return description;
         }
+
+        public static int GetLastByteNotZeroIndex(byte[] buffer)
+        {
+            for(int i = buffer.Length - 1; i > -1; i--)
+            {
+                if(buffer[i] > 0) 
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace CSharp.NFC.Cards
         /// Response | 0x00 (1 byte), {vendorID} (1 byte), {productType} (1 byte), {productSubtype} (1 byte), {majorProductVersion} (1 byte), {minorProductVersion} (1 byte), {storageSize} (1 byte), {procotolType} (1 byte)
         /// Reference: NTAG213/215/216, chapter: 10.1. GET_VERSION, pag. 34
         /// </summary>
-        private readonly Lazy<Ntag215Command> _lazyGET_VERSION = new Lazy<Ntag215Command>(() =>
+        private readonly Lazy<Ntag215Command> _GET_VERSION = new Lazy<Ntag215Command>(() =>
         {
             Ntag215Command command = new Ntag215Command()
             {
@@ -65,7 +65,7 @@ namespace CSharp.NFC.Cards
             };
             return command;
         });
-        private Ntag215Command GET_VERSION { get => _lazyGET_VERSION.Value; }
+        private Ntag215Command GET_VERSION { get => _GET_VERSION.Value; }
         #endregion
 
         #region Constructors
