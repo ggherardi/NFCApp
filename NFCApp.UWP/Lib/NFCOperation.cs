@@ -47,6 +47,7 @@ namespace CSharp.NFC
             NFCPayload readerPayload = null;
             NFCPayload controllerPayload = null;
             NFCPayload cardPayload = null;
+            ResponseBuffer = Utility.TrimTrailingZeros(ResponseBuffer);
             if (_readerCommand != null)
             {
                 readerPayload = _readerCommand.ExtractPayload(ResponseBuffer);

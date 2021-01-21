@@ -15,61 +15,91 @@ namespace CSharp.NFC.Readers
         /// Class: 0xFF (1 byte) - Instruction: 0xCA (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Le: 0x00 (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 4.1. Get Data, pag. 11
         /// </summary>
-        private Lazy<ACR122Command> _GetUID = new Lazy<ACR122Command>(() => 
+        private Lazy<ACR122Command> _getUID = new Lazy<ACR122Command>(() => 
         {
             ACR122Command command = new ACR122Command()
             {
                 Bytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 },
-                Response = new NFCCommandResponse() { HeaderBytes = new byte[] { }, MinBufferLength = 8 }
+                Response = new NFCCommandResponse() { HeaderBytes = new byte[] { }, MinBufferLength = 6 }
             };
             return command;
         });
-        private ACR122Command GetUID { get => _GetUID.Value; }
+        private ACR122Command GetUID { get => _getUID.Value; }
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0x82 (1 byte) - P1: 0x00 (Key Structure) (1 byte) - P2: 0x00 (Key Number) (1 byte) - Le: 0x06 (1 byte) - Data In: {key} (6 bytes)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.1. Load Authentication Keys, pag. 12
         /// </summary>
-        private ACR122Command LoadAuthenticationKeysCommand = new ACR122Command()
+        private Lazy<ACR122Command> _loadAuthenticationKeysCommand = new Lazy<ACR122Command>(() =>
         {
-            Bytes = new byte[] { 0xFF, 0x82, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
-        };
+            ACR122Command command = new ACR122Command()
+            {
+                Bytes = new byte[] { 0xFF, 0x82, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+                Response = new NFCCommandResponse() { MinBufferLength = 2 }
+            };
+            return command;
+        });
+        private ACR122Command LoadAuthenticationKeysCommand { get => _loadAuthenticationKeysCommand.Value; }
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xB0 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Le: {numberOfBytesToRead: max 16 bytes} (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.3. Read Binary Blocks, pag. 16
         /// </summary>
-        private ACR122Command ReadBinaryBlocksCommand = new ACR122Command()
+        private Lazy<ACR122Command> _readBinaryBlocksCommand = new Lazy<ACR122Command>(() =>
         {
-            Bytes = new byte[] { 0xFF, 0xB0, 0x00, 0x00, 0x00 }
-        };
+            ACR122Command command = new ACR122Command()
+            {
+                Bytes = new byte[] { 0xFF, 0xB0, 0x00, 0x00, 0x00 },
+                Response = new NFCCommandResponse() { MinBufferLength = 2 }
+            };
+            return command;
+        });
+        private ACR122Command ReadBinaryBlocksCommand { get => _readBinaryBlocksCommand.Value; }
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xB1 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Le: 0x04 (1 byte)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.5.2. Read Value Block, pag. 19
         /// </summary>
-        private ACR122Command ReadValueBlockCommand = new ACR122Command()
+        private Lazy<ACR122Command> _readValueBlockCommand = new Lazy<ACR122Command>(() =>
         {
-            Bytes = new byte[] { 0xFF, 0xB1, 0x00, 0x00, 0x04 }
-        };
+            ACR122Command command = new ACR122Command()
+            {
+                Bytes = new byte[] { 0xFF, 0xB1, 0x00, 0x00, 0x04 },
+                Response = new NFCCommandResponse() { MinBufferLength = 6 }
+            };
+            return command;
+        });
+        private ACR122Command ReadValueBlockCommand { get => _readValueBlockCommand.Value; }
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0xD6 (1 byte) - P1: 0x00 (1 byte) - P2: {blockNumber} (1 byte) - Lc: {numberOfBytesToUpdate} (1 byte) - Data In: {dataIn} (4 bytes)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 5.4. Update Binary Blocks, pag. 17
         /// </summary>
-        private ACR122Command UpdateBinaryBlockCommand = new ACR122Command()
+        private Lazy<ACR122Command> _updateBinaryBlockCommand = new Lazy<ACR122Command>(() =>
         {
-            Bytes = new byte[] { 0xFF, 0xD6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
-        };
+            ACR122Command command = new ACR122Command()
+            {
+                Bytes = new byte[] { 0xFF, 0xD6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+                Response = new NFCCommandResponse() { MinBufferLength = 2 }
+            };
+            return command;
+        });
+        private ACR122Command UpdateBinaryBlockCommand { get => _updateBinaryBlockCommand.Value; }
 
         /// <summary>
         /// Class: 0xFF (1 byte) - Instruction: 0x00 (1 byte) - P1: 0x00 (1 byte) - P2: 0x00 (1 byte) - Lc: {payloadLength} (1 byte) - Data In: {payload} (payload.length bytes, max 255 bytes)
         /// Reference: ACR122U Application Programming Interface V2.04, chapter: 6.1. Direct Transmit, pag. 21
         /// </summary>
-        private ACR122Command DirectTransmitCommand = new ACR122Command()
+        private Lazy<ACR122Command> _directTransmitCommand = new Lazy<ACR122Command>(() =>
         {
-            Bytes = new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00 }
-        };
+            ACR122Command command = new ACR122Command()
+            {
+                Bytes = new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00 },
+                Response = new NFCCommandResponse() { MinBufferLength = 1 }
+            };
+            return command;
+        });
+        private ACR122Command DirectTransmitCommand { get => _directTransmitCommand.Value; }
 
         public enum Status
         {

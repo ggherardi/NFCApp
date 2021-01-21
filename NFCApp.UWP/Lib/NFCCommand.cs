@@ -44,6 +44,13 @@ namespace CSharp.NFC
         public byte[] HeaderBytes { get; set; }
         public int MinBufferLength { get; set; }
 
+        public NFCCommandResponse()
+        {
+            CommandStatus = new NFCCommandStatus();
+            HeaderBytes = new byte[] { };
+            MinBufferLength = 0;
+        }
+
         public void SetCommandStatus(int resultCode, string message, NFCCommandStatus.Status result)
         {
             CommandStatus = new NFCCommandStatus()

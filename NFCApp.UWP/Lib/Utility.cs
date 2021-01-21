@@ -26,6 +26,14 @@ namespace CSharp.NFC
             return description;
         }
 
+        public static byte[] TrimTrailingZeros(byte[] buffer)
+        {            
+            int lastByteNotZeroIndex = GetLastByteNotZeroIndex(buffer);
+            byte[] resultBuffer = new byte[lastByteNotZeroIndex + 1];
+            Array.Copy(buffer, 0, resultBuffer, 0, lastByteNotZeroIndex + 1);
+            return resultBuffer;
+        }
+
         public static int GetLastByteNotZeroIndex(byte[] buffer)
         {
             for(int i = buffer.Length - 1; i > -1; i--)
