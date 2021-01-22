@@ -95,7 +95,7 @@ namespace CSharp.NFC.Cards
         public Ntag215() : base() { }
         #endregion
 
-        #region Implementation
+        #region Abstraction implementation
         protected override NFCCommand Get_PWD_AUTH_Command(string password)
         {
             Ntag215Command command = new Ntag215Command(PWD_AUTH);
@@ -113,11 +113,31 @@ namespace CSharp.NFC.Cards
             return get_version;
         }
         #endregion
+
+        //public static NFCCommand GetSecuritySetupCommand()
+        //{
+
+        //}
     }
 
     public class Ntag215Command : NFCCommand
     {
         public Ntag215Command(Ntag215Command commandToClone) : base(commandToClone) { }
         public Ntag215Command() : base() { }
+    }
+
+    public class Ntag215Authentication
+    {
+        #region AUTH0 byte
+        private int _AUTH0;
+        #endregion
+
+        #region ACCESS byte
+        private bool _PROT;
+        private bool _CFGLCK;
+        private bool 
+        #endregion
+
+
     }
 }
