@@ -19,7 +19,7 @@ namespace CSharp.NFC.Readers
         {
             ACR122Command command = new ACR122Command()
             {
-                Bytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 },
+                CommandBytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 },
                 Response = new NFCCommandResponse() { HeaderBytes = new byte[] { }, MinBufferLength = 6 }
             };
             return command;
@@ -34,7 +34,7 @@ namespace CSharp.NFC.Readers
         {
             ACR122Command command = new ACR122Command()
             {
-                Bytes = new byte[] { 0xFF, 0x82, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+                CommandBytes = new byte[] { 0xFF, 0x82, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
                 Response = new NFCCommandResponse() { MinBufferLength = 2 }
             };
             return command;
@@ -49,7 +49,7 @@ namespace CSharp.NFC.Readers
         {
             ACR122Command command = new ACR122Command()
             {
-                Bytes = new byte[] { 0xFF, 0xB0, 0x00, 0x00, 0x00 },
+                CommandBytes = new byte[] { 0xFF, 0xB0, 0x00, 0x00, 0x00 },
                 Response = new NFCCommandResponse() { MinBufferLength = 2 }
             };
             return command;
@@ -64,7 +64,7 @@ namespace CSharp.NFC.Readers
         {
             ACR122Command command = new ACR122Command()
             {
-                Bytes = new byte[] { 0xFF, 0xB1, 0x00, 0x00, 0x04 },
+                CommandBytes = new byte[] { 0xFF, 0xB1, 0x00, 0x00, 0x04 },
                 Response = new NFCCommandResponse() { MinBufferLength = 6 }
             };
             return command;
@@ -79,7 +79,7 @@ namespace CSharp.NFC.Readers
         {
             ACR122Command command = new ACR122Command()
             {
-                Bytes = new byte[] { 0xFF, 0xD6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+                CommandBytes = new byte[] { 0xFF, 0xD6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
                 Response = new NFCCommandResponse() { MinBufferLength = 2 }
             };
             return command;
@@ -94,7 +94,7 @@ namespace CSharp.NFC.Readers
         {
             ACR122Command command = new ACR122Command()
             {
-                Bytes = new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00 },
+                CommandBytes = new byte[] { 0xFF, 0x00, 0x00, 0x00, 0x00 },
                 Response = new NFCCommandResponse() { MinBufferLength = 1 }
             };
             return command;
@@ -128,26 +128,26 @@ namespace CSharp.NFC.Readers
         protected override NFCCommand Get_ReadBinaryBlocksCommand(byte blockNumber, int numberOfBytesToRead)
         {
             ACR122Command command = new ACR122Command(ReadBinaryBlocksCommand);
-            command.Bytes.SetValue(blockNumber, 3);
-            command.Bytes.SetValue((byte)numberOfBytesToRead, 4);
+            command.CommandBytes.SetValue(blockNumber, 3);
+            command.CommandBytes.SetValue((byte)numberOfBytesToRead, 4);
             return command;
         }
 
         protected override NFCCommand Get_ReadValueBlockCommand(byte blockNumber)
         {
             ACR122Command command =  ReadValueBlockCommand;
-            command.Bytes.SetValue(blockNumber, 3);
+            command.CommandBytes.SetValue(blockNumber, 3);
             return command;
         }
 
         protected override NFCCommand Get_UpdateBinaryBlockCommand(byte blockNumber, byte[] dataIn, int numberOfBytesToUpdate = 4)
         {
             ACR122Command command = new ACR122Command(UpdateBinaryBlockCommand);
-            command.Bytes.SetValue(blockNumber, 3);
-            command.Bytes.SetValue((byte)numberOfBytesToUpdate, 4);
+            command.CommandBytes.SetValue(blockNumber, 3);
+            command.CommandBytes.SetValue((byte)numberOfBytesToUpdate, 4);
             for (int i = 0; i < dataIn.Length; i++)
             {
-                command.Bytes.SetValue(dataIn[i], i + 5);
+                command.CommandBytes.SetValue(dataIn[i], i + 5);
             }
             return command;
         }
@@ -155,8 +155,8 @@ namespace CSharp.NFC.Readers
         protected override NFCCommand Get_DirectTransmitCommand(byte[] payload)
         {
             ACR122Command command = new ACR122Command(DirectTransmitCommand);
-            command.Bytes.SetValue((byte)payload.Length, 4);
-            command.Bytes = command.Bytes.Concat(payload).ToArray();
+            command.CommandBytes.SetValue((byte)payload.Length, 4);
+            command.CommandBytes = command.CommandBytes.Concat(payload).ToArray();
             return command;
         }
 

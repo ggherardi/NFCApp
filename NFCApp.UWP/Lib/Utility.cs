@@ -34,6 +34,11 @@ namespace CSharp.NFC
             return resultBuffer;
         }
 
+        public static string GetByteArrayAsHexString(byte[] buffer)
+        {
+            return BitConverter.ToString(buffer);
+        }
+
         public static int GetLastByteNotZeroIndex(byte[] buffer)
         {
             for(int i = buffer.Length - 1; i > -1; i--)

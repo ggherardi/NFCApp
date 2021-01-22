@@ -20,6 +20,7 @@ using Xamarin.Forms;
 using Windows.Storage.Streams;
 using CSharp.NFC.Readers;
 using CSharp.NFC;
+using System.Text;
 
 namespace NFCApp.UWP
 {
@@ -99,7 +100,7 @@ namespace NFCApp.UWP
 
             if (response.Status == Winscard.SCARD_S_SUCCESS)
             {
-                cardUID = BitConverter.ToString(response.ResponseBuffer.ToArray()).Replace("-", string.Empty).ToLower();
+                cardUID = response.ResponsePayloadAsHexString;
             }
             else
             {
@@ -110,6 +111,7 @@ namespace NFCApp.UWP
 
         private void ButtonRead_Click(object sender, RoutedEventArgs e)
         {
+            txtInputAsHex.Text = int.Parse(txtInputBlock.Text).ToString("X2");
             ReadCard();
         }
 
@@ -129,18 +131,19 @@ namespace NFCApp.UWP
                 string hexadecimals = string.Empty;
                 foreach(byte b in readBlocksResponse.ResponseBuffer)
                 {
-                    //data = $"{data}{(char)b}";                                       
-                    hexadecimals = $"{hexadecimals}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{b.ToString("X2")}";
+                    //data = $"{data}{(char)b}";                                          
                     characters = $"{characters}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{i++}[{(b == 0x90 ? "END" : ((char)b).ToString())}]";
-                    decimals = $"{decimals}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{b}{(i % 4 == 0 ? Environment.NewLine : string.Empty)}";
+                    string newline = (i % 4 == 0 ? Environment.NewLine : string.Empty);
+                    hexadecimals = $"{hexadecimals}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{b:X2}{newline}";
+                    decimals = $"{decimals}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{b}{newline}";
                 }
                 j++;
                 WriteMessageAsync(txtRead, decimals);
                 WriteMessageAsync(txtReadBlocks, characters);
                 WriteMessageAsync(txtReadBlocks, hexadecimals);
-                AppendMessageAsync(txtReadBlocks, System.Text.Encoding.ASCII.GetString(readBlocksResponse.ResponseBuffer));
-                AppendMessageAsync(txtReadBlocks, System.Text.Encoding.UTF8.GetString(readBlocksResponse.ResponseBuffer));
-                AppendMessageAsync(txtReadBlocks, System.Text.Encoding.Unicode.GetString(readBlocksResponse.ResponseBuffer));
+                AppendMessageAsync(txtReadBlocks, Encoding.ASCII.GetString(readBlocksResponse.ResponseBuffer));
+                AppendMessageAsync(txtReadBlocks, Encoding.UTF8.GetString(readBlocksResponse.ResponseBuffer));
+                AppendMessageAsync(txtReadBlocks, Encoding.Unicode.GetString(readBlocksResponse.ResponseBuffer));
             }
         }
 

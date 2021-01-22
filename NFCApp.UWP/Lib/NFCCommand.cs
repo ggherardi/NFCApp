@@ -10,14 +10,14 @@ namespace CSharp.NFC
     public class NFCCommand
     {
         private Func<byte[], NFCPayload> _extractPayload = (responseBuffer) => { return new NFCPayload(responseBuffer); };
-        public virtual byte[] Bytes { get; set; }
+        public virtual byte[] CommandBytes { get; set; }
         public NFCCommandResponse Response { get; set; }
         public NFCPayload Payload { get; set; }
         public Func<byte[], NFCPayload> ExtractPayload { get => _extractPayload; set => _extractPayload = value; }
 
         public NFCCommand(byte[] commandBytes, byte[] responseHeaderBytes, int minResponseBufferLength)
         {
-            Bytes = commandBytes;
+            CommandBytes = commandBytes;
             Response = new NFCCommandResponse
             {
                 HeaderBytes = responseHeaderBytes,
@@ -25,7 +25,7 @@ namespace CSharp.NFC
             };
         }
 
-        public NFCCommand(NFCCommand commandToClone) : this(commandToClone.Bytes, commandToClone.Response.HeaderBytes, commandToClone.Response.MinBufferLength) { }
+        public NFCCommand(NFCCommand commandToClone) : this(commandToClone.CommandBytes, commandToClone.Response.HeaderBytes, commandToClone.Response.MinBufferLength) { }
 
         /// <summary>
         /// Initializes a new NFCCommand. If this constructor is used, it is mandatory to specify the Bytes and the NFCCommandResponse.
@@ -34,7 +34,7 @@ namespace CSharp.NFC
 
         public void ConcatBytesToCommand(byte[] bytesToAdd)
         {
-            Bytes = Bytes.Concat(bytesToAdd).ToArray();
+            CommandBytes = CommandBytes.Concat(bytesToAdd).ToArray();
         }
     }
 

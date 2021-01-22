@@ -17,7 +17,7 @@ namespace CSharp.NFC.Controllers
         /// </summary>
         private readonly PN533Command _dataExchangeCommand = new PN533Command()
         {
-            Bytes = new byte[] { 0xD4, 0x42 },
+            CommandBytes = new byte[] { 0xD4, 0x42 },
             Response = new NFCCommandResponse() { HeaderBytes = new byte[] { 0xD5, 0x43, }, MinBufferLength = 3 }
         };
 

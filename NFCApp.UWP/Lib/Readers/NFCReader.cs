@@ -196,46 +196,39 @@ namespace CSharp.NFC.Readers
             WriteNDEFMessage(value, 4);
         }
 
+        #region Card commands
         public NFCOperation TransmitCardCommand(NFCOperation operation)
         {
             return Transmit(operation);
         }
 
-        public NFCOperation PasswordAuthentication(string password)
+        public NFCOperation TransmitCardCommand(NFCCommand cardCommand)
         {
             NFCOperation operation = null;
             try
             {
                 NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
-                NFCCommand passwordAuthenticationCommand = _connectedCard.GetPasswordAuthenticationCommand(password);
-                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(passwordAuthenticationCommand.Bytes).ToArray());
-                operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, passwordAuthenticationCommand, directTransmitCommand.Bytes);
-                operation = TransmitCardCommand(operation);                
-            }   
-            catch(Exception ex)
-            {
-                ManageException(ex);
-            }
-            return operation;
-        }
-
-        public NFCOperation GetCardVersion()
-        {
-            NFCOperation operation = null;
-            try
-            {
-                NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
-                NFCCommand getVersionCommand = _connectedCard.GetGetVersionCommand();
-                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.Bytes.Concat(getVersionCommand.Bytes).ToArray());
-                operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, getVersionCommand, directTransmitCommand.Bytes);
+                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.CommandBytes.Concat(cardCommand.CommandBytes).ToArray());
+                operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, cardCommand, directTransmitCommand.CommandBytes);
                 operation = TransmitCardCommand(operation);
             }
             catch(Exception ex)
             {
                 ManageException(ex);
             }
-            return operation;
+            return TransmitCardCommand(operation);
         }
+
+        public NFCOperation PasswordAuthentication(string password, string pack)
+        {
+            return TransmitCardCommand(_connectedCard.GetPasswordAuthenticationCommand(password));
+        }
+
+        public NFCOperation GetCardVersion()
+        {
+            return TransmitCardCommand(_connectedCard.GetGetVersionCommand());
+        }
+        #endregion
         #endregion
 
         #region Aux methods

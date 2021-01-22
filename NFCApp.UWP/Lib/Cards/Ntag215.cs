@@ -16,11 +16,18 @@ namespace CSharp.NFC.Cards
         #region Commands
         /// <summary>
         /// Cmd: 0x1B (1 byte) - Pwd: {password} (4 bytes)
-        /// Reference: NTAG213/215/216, chapter: 10.7. PWD_AUTH, pag. 46
+        /// References
+        /// - Command NTAG213/215/216, chapter: 10.7. PWD_AUTH, pag. 46
+        /// - Memory configuration for authentication and locks, chapter 8.5.7., Configuration Pages, pag. 18 
+        /// - Programming authentication and locks, chapter 8.8.1., Programming of PWD and PACK, pag. 30
+        /// Step should be as follow: 
+        /// 1) Write PWD at memory page 133 (0x85) and PACK at memory page 134 (0x86) 
+        /// 2) Set the AUTH0 byte at memory page 131 (0x83) to cover all memory 
+        /// 3) Lock the PWD bytes by setting the static LOCK bytes at memory page 2 (0x02) 
         /// </summary>
         private Ntag215Command PWD_AUTH = new Ntag215Command()
         {
-            Bytes = new byte[] { 0x1B, 0x00, 0x00, 0x00, 0x00 }
+            CommandBytes = new byte[] { 0x1B, 0x00, 0x00, 0x00, 0x00 }
         };
 
         /// <summary>
@@ -32,7 +39,7 @@ namespace CSharp.NFC.Cards
         {
             Ntag215Command command = new Ntag215Command()
             {
-                Bytes = new byte[] { 0x60 },
+                CommandBytes = new byte[] { 0x60 },
                 Response = new NFCCommandResponse() { HeaderBytes = new byte[] { 0x00 }, MinBufferLength = 8 }
             };
             command.ExtractPayload = (responseBuffer) =>
@@ -66,6 +73,20 @@ namespace CSharp.NFC.Cards
             return command;
         });
         private Ntag215Command GET_VERSION { get => _GET_VERSION.Value; }
+
+        /// <summary>
+        /// Input | Cmd: 0xA2 (1 byte), {pageAddress} (1 byte), {data} (4 bytes)
+        /// Reference: NTAG213/215/216, chapter: 10.4. WRITE, pag. 41
+        /// </summary>
+        private readonly Lazy<Ntag215Command> _WRITE = new Lazy<Ntag215Command>(() =>
+        {
+            Ntag215Command command = new Ntag215Command()
+            {
+                CommandBytes = new byte[] { 0x60, 0x00, 0x00, 0x00, 0x00, 0x00 }
+            };
+            return command;
+        });
+        public Ntag215Command WRITE { get => _WRITE.Value; }
         #endregion
 
         #region Constructors
@@ -81,7 +102,7 @@ namespace CSharp.NFC.Cards
             byte[] passwordBytes = Encoding.Default.GetBytes(password);
             for(int i = 0; i < 4; i++)
             {
-                command.Bytes.SetValue(passwordBytes[i], i);
+                command.CommandBytes.SetValue(passwordBytes[i], i);
             }            
             return command;
         }
