@@ -120,7 +120,14 @@ namespace CSharp.NFC.Controllers
             {
                 int responseStatusByte = responseBuffer[2];
                 PN533.Status responseStatus = (PN533.Status)responseStatusByte;
-                Response.SetCommandSuccessful(responseStatusByte, Utility.GetEnumDescription(responseStatus));
+                if(responseStatusByte == 0)
+                {
+                    Response.SetCommandSuccessful(responseStatusByte, Utility.GetEnumDescription(responseStatus));
+                }
+                else
+                {
+                    Response.SetCommandFailure(responseStatusByte, Utility.GetEnumDescription(responseStatus));
+                }
                 Array.Copy(responseBuffer, 3, payload, 0, responseBuffer.Length - 3);
             }
             else

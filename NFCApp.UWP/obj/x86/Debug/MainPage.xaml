@@ -24,7 +24,7 @@
         <TextBox x:ConnectionId='10' x:Name="txtInput" HorizontalAlignment="Left" Height="47" Margin="916,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175"/>
         <TextBlock x:ConnectionId='11' Name="txtInputAsHex" HorizontalAlignment="Left" Height="56" Margin="1018,119,0,0" Text="00" TextWrapping="Wrap" VerticalAlignment="Top" Width="73"/>
         <Button x:ConnectionId='12' x:Name="btnProtectWithPassword" Content="Protect with password" Height="54" Margin="581,435,0,0" Width="284" VerticalAlignment="Top"                                     />
-        <TextBox x:ConnectionId='13' x:Name="txtPassword" HorizontalAlignment="Left" Height="54" Margin="916,435,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="78"/>
+        <TextBox x:ConnectionId='13' x:Name="txtPassword" HorizontalAlignment="Left" Height="54" Margin="916,435,0,0" Text="aaaa" TextWrapping="Wrap" VerticalAlignment="Top" Width="78"/>
         <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>

@@ -115,9 +115,13 @@ namespace NFCApp.UWP
             txtInputAsHex.Text = int.Parse(txtInputBlock.Text).ToString("X2");
             ReadCard();
         }
-
+        bool Authenticated = false;
         private void ReadCard()
-        {                        
+        {
+            if (!Authenticated)
+            {
+                TicketValidator.PasswordAuthentication("aaaa");
+            }
             WriteMessageAsync(txtRead, string.Empty);
             WriteMessageAsync(txtReadBlocks, string.Empty);
             string inputBlock = txtInputBlock.Text;

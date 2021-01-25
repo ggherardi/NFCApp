@@ -174,7 +174,7 @@ namespace CSharp.NFC.Readers
 
         private List<NFCOperation> WriteBlocks(byte[] bytes, int startingPage)
         {
-            List<NFCOperation> operations = null;
+            List<NFCOperation> operations = new List<NFCOperation>();
             int j = 0;
             for (int i = 0; i < bytes.Length; i += _connectedCard.MaxWritableBlocks)
             {
@@ -216,9 +216,11 @@ namespace CSharp.NFC.Readers
             NFCOperation operation = null;
             try
             {
-                NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
-                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.CommandBytes.Concat(cardCommand.CommandBytes).ToArray());
-                operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, cardCommand, directTransmitCommand.CommandBytes);
+                //NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
+                //NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.CommandBytes.Concat(cardCommand.CommandBytes).ToArray());
+                //operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, cardCommand, directTransmitCommand.CommandBytes);
+                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(cardCommand.CommandBytes);
+                operation = new NFCOperation(directTransmitCommand, null, cardCommand, directTransmitCommand.CommandBytes);
                 operation = TransmitCardCommand(operation);
             }
             catch(Exception ex)
@@ -228,7 +230,7 @@ namespace CSharp.NFC.Readers
             return TransmitCardCommand(operation);
         }
 
-        public NFCOperation PasswordAuthentication(string password, string pack)
+        public NFCOperation PasswordAuthentication(string password)
         {
             return TransmitCardCommand(_connectedCard.GetPasswordAuthenticationCommand(password));
         }

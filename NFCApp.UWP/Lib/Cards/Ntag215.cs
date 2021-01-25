@@ -101,9 +101,9 @@ namespace CSharp.NFC.Cards
         {
             Ntag215Command command = new Ntag215Command(PWD_AUTH);
             byte[] passwordBytes = Encoding.Default.GetBytes(password);
-            for(int i = 0; i < 4; i++)
+            for(int i = 1; i <= 4; i++)
             {
-                command.CommandBytes.SetValue(passwordBytes[i], i);
+                command.CommandBytes.SetValue(passwordBytes[i - 1], i);
             }            
             return command;
         }
