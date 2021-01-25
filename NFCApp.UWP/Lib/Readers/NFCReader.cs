@@ -172,23 +172,32 @@ namespace CSharp.NFC.Readers
             return WriteBlocks(blockNumber, dataIn, _connectedCard.MaxWritableBlocks);
         }
 
-        public void WriteNDEFMessage(string value, int startingBlock)
+        private List<NFCOperation> WriteBlocks(byte[] bytes, int startingPage)
         {
+            List<NFCOperation> operations = null;
+            int j = 0;
+            for (int i = 0; i < bytes.Length; i += _connectedCard.MaxWritableBlocks)
+            {
+                operations.Add(WriteBlocks((byte)(startingPage + j), bytes.Skip(j * _connectedCard.MaxWritableBlocks).Take(_connectedCard.MaxWritableBlocks).ToArray()));
+                j++;
+            }
+            return operations;
+        }
+
+        public List<NFCOperation> WriteNDEFMessage(string value, int startingPage)
+        {
+            List<NFCOperation> operations = null;
             try
             {
                 NDEFMessage message = new NDEFMessage(value);
                 byte[] blockBytes = message.GetFormattedBlock();
-                int j = 0;
-                for (int i = 0; i < blockBytes.Length; i += _connectedCard.MaxWritableBlocks)
-                {
-                    WriteBlocks((byte)(startingBlock + j), blockBytes.Skip(j * _connectedCard.MaxWritableBlocks).Take(_connectedCard.MaxWritableBlocks).ToArray());
-                    j++;
-                }
+                operations = WriteBlocks(blockBytes, startingPage);
             }
             catch(Exception ex)
             {
                 ManageException(ex);
             }
+            return operations;
         }
 
         public void WriteNDEFMessage(string value)
@@ -222,6 +231,11 @@ namespace CSharp.NFC.Readers
         public NFCOperation PasswordAuthentication(string password, string pack)
         {
             return TransmitCardCommand(_connectedCard.GetPasswordAuthenticationCommand(password));
+        }
+
+        public List<NFCOperation> SetupCardSecurityConfiguration(byte[] securityConfigurationBytes)
+        {
+            return WriteBlocks(securityConfigurationBytes, _connectedCard.UserConfigurationStartingPage);
         }
 
         public NFCOperation GetCardVersion()

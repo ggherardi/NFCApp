@@ -11,6 +11,7 @@ namespace CSharp.NFC.Cards
         #region Properties
         public override int MaxWritableBlocks { get => 4; protected set => MaxWritableBlocks = value; }
         public override int MaxReadableBytes { get => 16; protected set => MaxReadableBytes = value; }
+        public override int UserConfigurationStartingPage { get => 0x83; protected set => UserConfigurationStartingPage = value; }
         #endregion
 
         #region Commands
@@ -114,10 +115,13 @@ namespace CSharp.NFC.Cards
         }
         #endregion
 
-        //public static NFCCommand GetSecuritySetupCommand()
-        //{
-
-        //}
+        public static byte[] GetSecuritySetupBytes(string password, string pack)
+        {
+            Ntag215AuthConfig.MirrorByte mirrorByte = new Ntag215AuthConfig.MirrorByte(Ntag215AuthConfig.MirrorByte.MIRROR_CONF.NoMirror, Ntag215AuthConfig.MirrorByte.MIRROR_BYTE.First, Ntag215AuthConfig.MirrorByte.STRG_MOD_EN.Disabled);
+            Ntag215AuthConfig.AccessByte accessByte = new Ntag215AuthConfig.AccessByte(Ntag215AuthConfig.AccessByte.PROT.ReadWriteProtected, Ntag215AuthConfig.AccessByte.CFGLCK.UserConfigOpen, Ntag215AuthConfig.AccessByte.NFC_CNT_EN.Disabled, Ntag215AuthConfig.AccessByte.NFC_CNT_PWD_PROT.Disabled, 1);
+            Ntag215AuthConfig auth = new Ntag215AuthConfig(mirrorByte, 0, 4, accessByte, password, pack);
+            return auth.Bytes;
+        }
     }
 
     public class Ntag215Command : NFCCommand
@@ -126,18 +130,80 @@ namespace CSharp.NFC.Cards
         public Ntag215Command() : base() { }
     }
 
-    public class Ntag215Authentication
+    public class Ntag215AuthConfig
     {
-        #region AUTH0 byte
-        private int _AUTH0;
-        #endregion
+        public class MirrorByte
+        {
+            public byte Byte { get; private set; }
 
-        #region ACCESS byte
-        private bool _PROT;
-        private bool _CFGLCK;
-        private bool 
-        #endregion
+            public enum MIRROR_CONF
+            {
+                NoMirror = 0x00,
+                UIDMirror = 0x40,
+                NFCCounterMirror = 0x80,
+                UIDAndNFCCounterMirror = 0xC0
+            }
 
+            public enum MIRROR_BYTE
+            {
+                First = 0x00,
+                Second = 0x10,
+                Third = 0x20,
+                Fourth = 0x30
+            }
 
+            public enum STRG_MOD_EN
+            {
+                Disabled = 0x00,
+                Enabled = 0x04
+            }
+
+            public MirrorByte(MIRROR_CONF asciiMirrorConfig, MIRROR_BYTE mirrorBytePosition, STRG_MOD_EN strongModulation)
+            {
+                Byte = (byte)(0x00 | (int)asciiMirrorConfig | (int)mirrorBytePosition | (int)strongModulation);
+            }
+        }
+
+        public class AccessByte
+        {
+            public byte Byte { get; private set; }
+
+            public enum PROT
+            {
+                WriteProtected = 0x00,
+                ReadWriteProtected = 0x80
+            }
+
+            public enum CFGLCK
+            {
+                UserConfigOpen = 0x00,
+                PermanentlyLockUserConfig = 0x40
+            }
+
+            public enum NFC_CNT_EN
+            {
+                Disabled = 0x00,
+                Enabled = 0x10
+            }
+
+            public enum NFC_CNT_PWD_PROT
+            {
+                Disabled = 0x00,
+                Enabled = 0x08
+            }
+
+            public AccessByte(PROT protectionMode, CFGLCK userConfigLock, NFC_CNT_EN nfcCounter, NFC_CNT_PWD_PROT nfcCounterPasswordProtection, int maxPasswordAttempts)
+            {
+                Byte = (byte)(0x00 | (int)protectionMode | (int)userConfigLock | (int)nfcCounter | (int)nfcCounterPasswordProtection | maxPasswordAttempts.Clamp(0, 7));
+            }
+        }
+
+        public byte[] Bytes { get; private set; }
+
+        public Ntag215AuthConfig(MirrorByte mirrorByte, int mirrorPage, int firstProtectedPageNumber, AccessByte accessByte, string password, string pack)
+        {
+            Bytes = new byte[] { mirrorByte.Byte, 0x00, (byte)mirrorPage, (byte)firstProtectedPageNumber, accessByte.Byte, 0x00, 0x00, 0x00 };
+            Bytes = Bytes.Concat(Encoding.UTF8.GetBytes(password)).Concat(Encoding.ASCII.GetBytes(pack)).Concat(new byte[] { 0x00, 0x00 }).ToArray();
+        }
     }
 }

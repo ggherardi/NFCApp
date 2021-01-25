@@ -21,6 +21,7 @@ using Windows.Storage.Streams;
 using CSharp.NFC.Readers;
 using CSharp.NFC;
 using System.Text;
+using CSharp.NFC.Cards;
 
 namespace NFCApp.UWP
 {
@@ -155,6 +156,11 @@ namespace NFCApp.UWP
             //TicketValidator.WriteNDEFMessage(txtInput.Text);            
         }
 
+        private void btnProtectWithPassword_Click(object sender, RoutedEventArgs e)
+        {
+            TicketValidator.SetupCardSecurityConfiguration(Ntag215.GetSecuritySetupBytes(txtPassword.Text, "ok"));
+        }
+
         #region AuxMethods
         private async void ManageExceptionAsync(Exception ex)
         {
@@ -178,18 +184,6 @@ namespace NFCApp.UWP
             {
                 textBlock.Text = $"{textBlock.Text}{Environment.NewLine}{message}" ;
             });
-        }
-        #endregion
-
-        #region ByteBufferUtilities
-        private string GetBytesHexAsString(byte[] buffer)
-        {
-            return BitConverter.ToString(buffer.ToArray());
-        }
-
-        private string GetBytesAsString(byte[] buffer)
-        {
-            return string.Join('-', buffer);
         }
         #endregion
     }

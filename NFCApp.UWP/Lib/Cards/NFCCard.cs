@@ -23,6 +23,7 @@ namespace CSharp.NFC.Cards
 
         public abstract int MaxWritableBlocks { get; protected set; }
         public abstract int MaxReadableBytes { get; protected set; }
+        public abstract int UserConfigurationStartingPage { get; protected set; }
 
         public NFCCommand GetPasswordAuthenticationCommand(string password)
         {

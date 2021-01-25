@@ -14,15 +14,17 @@
         <TextBlock x:ConnectionId='3' Name="txtMessages" HorizontalAlignment="Left" Height="69" Margin="59,690,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="284"/>
         <TextBlock x:ConnectionId='4' Name="txtATR" HorizontalAlignment="Left" Margin="59,199,0,0" Text="Waiting ATR.." TextWrapping="Wrap" VerticalAlignment="Top" Height="458" Width="506" />
         <TextBlock x:ConnectionId='5' Name="txtStatus" HorizontalAlignment="Left" Margin="59,675,0,0" Text="Waiting Status.." TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="278"/>
-        <TextBlock x:ConnectionId='6' x:Name="txtRead" HorizontalAlignment="Left" Margin="581,208,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="564" Width="386" Text="waiting read.."></TextBlock>
+        <TextBlock x:ConnectionId='6' x:Name="txtRead" HorizontalAlignment="Left" Margin="581,208,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="196" Width="386" Text="waiting read.."></TextBlock>
         <TextBox x:ConnectionId='7' Name="txtInputBlock" HorizontalAlignment="Left" Height="56" Margin="916,119,0,0" Text="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
-        <ScrollViewer HorizontalAlignment="Left" Height="566" Margin="1006,208,0,0" VerticalAlignment="Top" Width="353">
-            <TextBlock x:ConnectionId='12' x:Name="txtReadBlocks" Text="waiting read.." TextWrapping="Wrap"/>
+        <ScrollViewer HorizontalAlignment="Left" Height="202" Margin="1006,208,0,0" VerticalAlignment="Top" Width="353">
+            <TextBlock x:ConnectionId='14' x:Name="txtReadBlocks" Text="waiting read.." TextWrapping="Wrap"/>
         </ScrollViewer>
         <TextBlock x:ConnectionId='8' x:Name="txtTestOperation" HorizontalAlignment="Left" Margin="1115,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="139" Width="260" Text="waiting test operation.."/>
         <Button x:ConnectionId='9' x:Name="btnTestOperation" Content="TestOperation" Height="56" Margin="581,33,0,0" VerticalAlignment="Top" Width="284"                                />
         <TextBox x:ConnectionId='10' x:Name="txtInput" HorizontalAlignment="Left" Height="47" Margin="916,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175"/>
         <TextBlock x:ConnectionId='11' Name="txtInputAsHex" HorizontalAlignment="Left" Height="56" Margin="1018,119,0,0" Text="00" TextWrapping="Wrap" VerticalAlignment="Top" Width="73"/>
+        <Button x:ConnectionId='12' x:Name="btnProtectWithPassword" Content="Protect with password" Height="54" Margin="581,435,0,0" Width="284" VerticalAlignment="Top"                                     />
+        <TextBox x:ConnectionId='13' x:Name="txtPassword" HorizontalAlignment="Left" Height="54" Margin="916,435,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="78"/>
         <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>
