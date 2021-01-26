@@ -155,7 +155,10 @@ namespace NFCApp.UWP
         private void btnTestOperation_Click(object sender, RoutedEventArgs e)
         {
             //NFCOperation response = TicketValidator.TestOperation();
+            TicketValidator.PasswordAuthentication("aaaa");
             NFCOperation operation = TicketValidator.GetCardVersion();
+            WriteMessageAsync(txtTestOperation, $"Command:{Environment.NewLine}{operation.WrappedCommandAsHex}");
+            AppendMessageAsync(txtTestOperation, $"Response:{Environment.NewLine}{operation.ResponseAsHexString}");
             //WriteMessageAsync(txtTestOperation, !string.IsNullOrEmpty(operation.ResponsePayloadText));
             //TicketValidator.WriteNDEFMessage(txtInput.Text);            
         }
@@ -163,6 +166,24 @@ namespace NFCApp.UWP
         private void btnProtectWithPassword_Click(object sender, RoutedEventArgs e)
         {
             TicketValidator.SetupCardSecurityConfiguration(Ntag215.GetSecuritySetupBytes(txtPassword.Text, "ok"));
+        }
+
+        private void btnIssueManualCommand_Click(object sender, RoutedEventArgs e)
+        {
+            string command = txtManualCommand.Text;
+            string[] commandAsStringArray = command.Split(' ');
+            byte[] commandBytes = new byte[commandAsStringArray.Length];
+            int i = 0;
+            foreach (string hexCommandAsString in commandAsStringArray)
+            {
+                commandBytes[i] = (byte)Convert.ToInt32(hexCommandAsString, 16);
+                i++;
+            }
+            NFCOperation operation = TicketValidator.TransmitDirectCommand(commandBytes);
+            WriteMessageAsync(txtManualCommandResult, $"ReaderResult = {operation.ReaderCommand.Response.CommandStatus.Message}{Environment.NewLine}");
+            AppendMessageAsync(txtManualCommandResult, $"ControllerResult = {operation.ControllerCommand?.Response.CommandStatus.Message}{Environment.NewLine}");
+            AppendMessageAsync(txtManualCommandResult, $"CardResult = {operation.CardCommand?.Response.CommandStatus.Message}{Environment.NewLine}");
+            AppendMessageAsync(txtManualCommandResult, $"ResponseBufferAsHex = {operation.ResponseAsHexString}{Environment.NewLine}");
         }
 
         #region AuxMethods

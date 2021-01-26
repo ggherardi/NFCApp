@@ -15,12 +15,23 @@ namespace CSharp.NFC.Controllers
         /// In order to send a direct transmit to the card, one should a combination of commands, i.e.: _reader.DirectTransmitCommand(payload:{_controller.ModuleDataExchangeCommand(DataOut:{_card.PWD_AUTH(value:{password})})})
         /// Reference: UM0801-03 (PN533 User Manual), chapter 8.4.9. InCommunicateThru, pag. 109
         /// </summary>
-        private readonly PN533Command _dataExchangeCommand = new PN533Command()
+        private readonly PN533Command _inCommunicateThru = new PN533Command()
         {
             CommandBytes = new byte[] { 0xD4, 0x42 },
             Response = new NFCCommandResponse() { HeaderBytes = new byte[] { 0xD5, 0x43, }, MinBufferLength = 3 }
         };
 
+        /// <summary>
+        /// Input | Class: 0xD4 (1 byte) - Instruction: 0x40 (1 byte) - Tg: {target} (1 byte) - Data out [] (n bytes)
+        /// Response | 0xD5 (1 byte), 0x41 (1 byte), Status (1 byte) (errors: UM0801-03 (PN533 User Manual), chapter 8.1. Error handling, pag. 50), DataIn[] (array of raw data)
+        /// More robust than InCommunicateThru
+        /// Reference: UM0801-03 (PN533 User Manual), chapter 8.4.8. InDataExchange, pag. 100
+        /// </summary>
+        private readonly PN533Command _inDataExchange = new PN533Command()
+        {
+            CommandBytes = new byte[] { 0xD4, 0x40, 0x00 },
+            Response = new NFCCommandResponse() { HeaderBytes = new byte[] { 0xD5, 0x41, }, MinBufferLength = 3 }
+        };
 
         /// <summary>
         /// Controller errors
@@ -90,7 +101,7 @@ namespace CSharp.NFC.Controllers
 
         protected override NFCCommand Get_DataExchangeCommand(byte[] payload)
         {
-            PN533Command command = new PN533Command(_dataExchangeCommand);
+            PN533Command command = new PN533Command(_inDataExchange);
             command.ConcatBytesToCommand(payload);
             return command;
         }

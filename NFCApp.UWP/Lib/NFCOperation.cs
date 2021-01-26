@@ -12,8 +12,10 @@ namespace CSharp.NFC
         private readonly NFCCommand _controllerCommand;
         private readonly NFCCommand _cardCommand;
         private readonly byte[] _wrappedCommand;
+        private readonly string _wrappedCommandAsHex;
 
         public byte[] WrappedCommand { get => _wrappedCommand; }
+        public string WrappedCommandAsHex { get => _wrappedCommandAsHex; }
         public byte[] ResponseBuffer { get; set; }
         public string ResponseAsHexString { get; private set; }
         public string ResponsePayloadAsHexString { get; private set; }
@@ -37,6 +39,7 @@ namespace CSharp.NFC
             _controllerCommand = controllerCommand;
             _cardCommand = cardCommand;
             _wrappedCommand = wrappedCommand;
+            _wrappedCommandAsHex = BitConverter.ToString(_wrappedCommand);
             OperationType = operationType;
         }
 
@@ -50,7 +53,6 @@ namespace CSharp.NFC
             NFCPayload controllerPayload = null;
             NFCPayload cardPayload = null;
             ResponseBuffer = Utility.TrimTrailingZeros(ResponseBuffer);
-            ResponseAsHexString = Utility.GetByteArrayAsHexString(ResponseBuffer);            
             if (_readerCommand != null)
             {
                 readerPayload = _readerCommand.ExtractPayload(ResponseBuffer);
@@ -76,7 +78,8 @@ namespace CSharp.NFC
                     ResponsePayloadText = cardPayload.PayloadText;
                 }
             }
-            ResponsePayloadAsHexString = Utility.GetByteArrayAsHexString(ResponsePayloadBuffer);
+            ResponseAsHexString = Utility.GetByteArrayAsHexString(ResponseBuffer);
+            ResponsePayloadAsHexString = BitConverter.ToString(ResponsePayloadBuffer);
         }
     }
 

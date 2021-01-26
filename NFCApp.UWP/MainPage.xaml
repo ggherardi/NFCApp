@@ -25,6 +25,9 @@
         <TextBlock Name="txtInputAsHex" HorizontalAlignment="Left" Height="56" Margin="1018,119,0,0" Text="00" TextWrapping="Wrap" VerticalAlignment="Top" Width="73"/>
         <Button x:Name="btnProtectWithPassword" Content="Protect with password" Height="54" Margin="581,435,0,0" Width="284" VerticalAlignment="Top" Click="btnProtectWithPassword_Click"/>
         <TextBox x:Name="txtPassword" HorizontalAlignment="Left" Height="54" Margin="916,435,0,0" Text="aaaa" TextWrapping="Wrap" VerticalAlignment="Top" Width="78"/>
+        <Button Name="btnIssueManualCommand" Content="Issue command" Height="50" Margin="581,588,0,0" VerticalAlignment="Top" Width="284" Click="btnIssueManualCommand_Click"/>
+        <TextBox x:Name="txtManualCommand" HorizontalAlignment="Left" Height="50" Margin="916,588,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="432"/>
+        <TextBlock x:Name="txtManualCommandResult" HorizontalAlignment="Left" Height="131" Margin="581,652,0,0" Text="waiting for manual command.." TextWrapping="Wrap" VerticalAlignment="Top" Width="767"/>
         <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>

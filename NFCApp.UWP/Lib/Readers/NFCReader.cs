@@ -123,7 +123,7 @@ namespace CSharp.NFC.Readers
                 ManageException(ex);
             }
             return operation;
-        }
+        }        
 
         public NFCOperation Transmit(NFCOperation operation, int responseBufferLength = 255)
         {
@@ -140,6 +140,11 @@ namespace CSharp.NFC.Readers
                 ManageException(ex);
             }
             return operation;
+        }
+
+        public NFCOperation TransmitDirectCommand(byte[] directCommand)
+        {
+            return Transmit(new NFCOperation(Get_DirectTransmitCommand(directCommand)));
         }
 
         public NFCOperation GetCardGuid()
@@ -216,11 +221,11 @@ namespace CSharp.NFC.Readers
             NFCOperation operation = null;
             try
             {
-                //NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
-                //NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.CommandBytes.Concat(cardCommand.CommandBytes).ToArray());
-                //operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, cardCommand, directTransmitCommand.CommandBytes);
-                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(cardCommand.CommandBytes);
-                operation = new NFCOperation(directTransmitCommand, null, cardCommand, directTransmitCommand.CommandBytes);
+                NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
+                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.CommandBytes.Concat(cardCommand.CommandBytes).ToArray());
+                operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, cardCommand, directTransmitCommand.CommandBytes);
+                //NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(cardCommand.CommandBytes);
+                //operation = new NFCOperation(directTransmitCommand, null, cardCommand, directTransmitCommand.CommandBytes);
                 operation = TransmitCardCommand(operation);
             }
             catch(Exception ex)
