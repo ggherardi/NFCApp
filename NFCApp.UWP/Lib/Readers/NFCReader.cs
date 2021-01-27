@@ -147,11 +147,6 @@ namespace CSharp.NFC.Readers
             return Transmit(new NFCOperation(Get_DirectTransmitCommand(directCommand)));
         }
 
-        //public NFCOperation TransmitDirectCommand(byte[] directCommand)
-        //{
-        //    return Control(Get_DirectTransmitCommand(directCommand).CommandBytes, Winscard.SCARD_CTL_CODE(3500));
-        //}
-
         public NFCOperation GetCardGuid()
         {
             return Transmit(new NFCOperation(Get_GetUIDCommand()));
@@ -172,17 +167,17 @@ namespace CSharp.NFC.Readers
             return Transmit(new NFCOperation(Get_ReadValueBlockCommand(block)));
         }
 
-        public NFCOperation WriteBlocks(byte blockNumber, byte[] dataIn, int numberOfBytesToUpdate)
+        private NFCOperation WriteBlocks(byte blockNumber, byte[] dataIn, int numberOfBytesToUpdate)
         {
             return Transmit(new NFCOperation(Get_UpdateBinaryBlockCommand(blockNumber, dataIn, numberOfBytesToUpdate)));
         }
 
-        public NFCOperation WriteBlocks(byte blockNumber, byte[] dataIn)
+        private NFCOperation WriteBlocks(byte blockNumber, byte[] dataIn)
         {
             return WriteBlocks(blockNumber, dataIn, _connectedCard.MaxWritableBlocks);
         }
 
-        private List<NFCOperation> WriteBlocks(byte[] bytes, int startingPage)
+        public List<NFCOperation> WriteBlocks(byte[] bytes, int startingPage)
         {
             List<NFCOperation> operations = new List<NFCOperation>();
             int j = 0;
@@ -216,41 +211,49 @@ namespace CSharp.NFC.Readers
         }
 
         #region Card commands
-        public NFCOperation TransmitCardCommand(NFCOperation operation)
-        {
-            return Transmit(operation);
-        }
-
-        public NFCOperation TransmitCardCommand(NFCCommand cardCommand)
+        public NFCOperation TransmitCardCommand(NFCCommand communicationCommand, NFCCommand cardCommand)
         {
             NFCOperation operation = null;
             try
             {
                 NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
-                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.CommandBytes.Concat(cardCommand.CommandBytes).ToArray());
+                NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(communicationCommand.CommandBytes.Concat(cardCommand.CommandBytes).ToArray());
                 operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, cardCommand, directTransmitCommand.CommandBytes);
-                operation = TransmitCardCommand(operation);
+                operation = Transmit(operation);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ManageException(ex);
             }
-            return TransmitCardCommand(operation);
+            return operation;
+            //return Transmit(operation);
         }
 
-        public NFCOperation PasswordAuthentication(string password)
+        public NFCOperation TransmitCardCommandWithDataExchange(NFCCommand cardCommand)
         {
-            return TransmitCardCommand(_connectedCard.GetPasswordAuthenticationCommand(password));
+            NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
+            return TransmitCardCommand(dataExchangeCommand, cardCommand);
+        }
+
+        public NFCOperation TransmitCardCommandWithInCommunicateThru(NFCCommand cardCommand)
+        {
+            NFCCommand inCommunicateThru = _controller.GetInCommunicateThruCommand();
+            return TransmitCardCommand(inCommunicateThru, cardCommand);
+        }
+
+        public NFCOperation Authenticate(string password)
+        {
+            return TransmitCardCommandWithInCommunicateThru(_connectedCard.GetPasswordAuthenticationCommand(password));
+        }
+
+        public NFCOperation GetCardVersion()
+        {
+            return TransmitCardCommandWithDataExchange(_connectedCard.GetGetVersionCommand());
         }
 
         public List<NFCOperation> SetupCardSecurityConfiguration(byte[] securityConfigurationBytes)
         {
             return WriteBlocks(securityConfigurationBytes, _connectedCard.UserConfigurationStartingPage);
-        }
-
-        public NFCOperation GetCardVersion()
-        {
-            return TransmitCardCommand(_connectedCard.GetGetVersionCommand());
         }
         #endregion
         #endregion

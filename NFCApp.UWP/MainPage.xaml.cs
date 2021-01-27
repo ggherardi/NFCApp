@@ -115,13 +115,10 @@ namespace NFCApp.UWP
             txtInputAsHex.Text = int.Parse(txtInputBlock.Text).ToString("X2");
             ReadCard();
         }
-        bool Authenticated = false;
+        
         private void ReadCard()
         {
-            if (!Authenticated)
-            {
-                TicketValidator.PasswordAuthentication("aaaa");
-            }
+            Authenticate();
             WriteMessageAsync(txtRead, string.Empty);
             WriteMessageAsync(txtReadBlocks, string.Empty);
             string inputBlock = txtInputBlock.Text;
@@ -143,7 +140,7 @@ namespace NFCApp.UWP
                     decimals = $"{decimals}{(!string.IsNullOrEmpty(characters) ? " - " : string.Empty)}{b}{newline}";
                 }
                 j++;
-                WriteMessageAsync(txtRead, decimals);
+                //WriteMessageAsync(txtRead, decimals);
                 WriteMessageAsync(txtReadBlocks, characters);
                 WriteMessageAsync(txtReadBlocks, hexadecimals);
                 AppendMessageAsync(txtReadBlocks, Encoding.ASCII.GetString(readBlocksResponse.ResponseBuffer));
@@ -152,20 +149,32 @@ namespace NFCApp.UWP
             }
         }
 
+        private void btnReconnect_Click(object sender, RoutedEventArgs e)
+        {
+            TicketValidator.ConnectCard();
+        }
+
         private void btnTestOperation_Click(object sender, RoutedEventArgs e)
         {
-            //NFCOperation response = TicketValidator.TestOperation();
-            TicketValidator.PasswordAuthentication("aaaa");
+            Authenticate();
             NFCOperation operation = TicketValidator.GetCardVersion();
             WriteMessageAsync(txtTestOperation, $"Command:{Environment.NewLine}{operation.WrappedCommandAsHex}");
-            AppendMessageAsync(txtTestOperation, $"Response:{Environment.NewLine}{operation.ResponseAsHexString}");
-            //WriteMessageAsync(txtTestOperation, !string.IsNullOrEmpty(operation.ResponsePayloadText));
-            //TicketValidator.WriteNDEFMessage(txtInput.Text);            
+            AppendMessageAsync(txtTestOperation, $"Response:{Environment.NewLine}{operation.ResponseAsHexString}");          
         }
 
         private void btnProtectWithPassword_Click(object sender, RoutedEventArgs e)
         {
-            TicketValidator.SetupCardSecurityConfiguration(Ntag215.GetSecuritySetupBytes(txtPassword.Text, "ok"));
+            Authenticate();
+            TicketValidator.SetupCardSecurityConfiguration(Ntag215.GetDefaultSecuritySetupBytes(txtPassword.Text, "ok"));
+        }
+
+        private void btnWrite_Click(object sender, RoutedEventArgs e)
+        {
+            int pageAddressToWrite = int.Parse(txtPageAddressToWrite.Text);
+            byte[] bytesToWrite = Utility.GetASCIIStringBytes(txtTextToWrite.Text);
+            string password = txtOperationPassword.Text;
+            Authenticate();
+            TicketValidator.WriteBlocks(bytesToWrite, (byte)pageAddressToWrite);
         }
 
         private void btnIssueManualCommand_Click(object sender, RoutedEventArgs e)
@@ -187,6 +196,14 @@ namespace NFCApp.UWP
         }
 
         #region AuxMethods
+        private void Authenticate()
+        {
+            if (!string.IsNullOrEmpty(txtOperationPassword.Text))
+            {
+                TicketValidator.Authenticate(txtOperationPassword.Text);
+            }
+        }
+
         private async void ManageExceptionAsync(Exception ex)
         {
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>

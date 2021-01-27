@@ -16,7 +16,8 @@ namespace CSharp.NFC.Cards
 
         #region Commands
         /// <summary>
-        /// Cmd: 0x1B (1 byte) - Pwd: {password} (4 bytes)
+        /// Input | Cmd: 0x1B (1 byte) - Pwd: {password} (4 bytes)
+        /// Response | {PACK} (2 bytes)
         /// References
         /// - Command NTAG213/215/216, chapter: 10.7. PWD_AUTH, pag. 46
         /// - Memory configuration for authentication and locks, chapter 8.5.7., Configuration Pages, pag. 18 
@@ -26,10 +27,16 @@ namespace CSharp.NFC.Cards
         /// 2) Set the AUTH0 byte at memory page 131 (0x83) to cover all memory 
         /// 3) Lock the PWD bytes by setting the static LOCK bytes at memory page 2 (0x02) 
         /// </summary>
-        private Ntag215Command PWD_AUTH = new Ntag215Command()
+        private readonly Lazy<Ntag215Command> _PWD_AUTH = new Lazy<Ntag215Command>(() =>
         {
-            CommandBytes = new byte[] { 0x1B, 0x00, 0x00, 0x00, 0x00 }
-        };
+            Ntag215Command command = new Ntag215Command()
+            {
+                CommandBytes = new byte[] { 0x1B, 0x00, 0x00, 0x00, 0x00 },
+                Response = new NFCCommandResponse() { MinBufferLength = 2 }
+            };
+            return command;
+        });
+        private Ntag215Command PWD_AUTH { get => _PWD_AUTH.Value; }
 
         /// <summary>
         /// Input | Cmd: 0x60 (1 byte)
@@ -115,13 +122,20 @@ namespace CSharp.NFC.Cards
         }
         #endregion
 
-        public static byte[] GetSecuritySetupBytes(string password, string pack)
+        #region Security commands
+        public static byte[] GetDefaultSecuritySetupBytes(string password, string pack, int firstPageAddressToProtect, Ntag215AuthConfig.AccessByte.CFGLCK userConfigLock, Ntag215AuthConfig.AccessByte.PROT protectionMode, int authenticationRetryLimit)
         {
             Ntag215AuthConfig.MirrorByte mirrorByte = new Ntag215AuthConfig.MirrorByte(Ntag215AuthConfig.MirrorByte.MIRROR_CONF.NoMirror, Ntag215AuthConfig.MirrorByte.MIRROR_BYTE.First, Ntag215AuthConfig.MirrorByte.STRG_MOD_EN.Enabled);
-            Ntag215AuthConfig.AccessByte accessByte = new Ntag215AuthConfig.AccessByte(Ntag215AuthConfig.AccessByte.PROT.WriteProtected, Ntag215AuthConfig.AccessByte.CFGLCK.UserConfigOpen, Ntag215AuthConfig.AccessByte.NFC_CNT_EN.Disabled, Ntag215AuthConfig.AccessByte.NFC_CNT_PWD_PROT.Disabled, 0);
-            Ntag215AuthConfig auth = new Ntag215AuthConfig(mirrorByte, 0, 4, accessByte, password, pack);
+            Ntag215AuthConfig.AccessByte accessByte = new Ntag215AuthConfig.AccessByte(protectionMode, userConfigLock, Ntag215AuthConfig.AccessByte.NFC_CNT_EN.Disabled, Ntag215AuthConfig.AccessByte.NFC_CNT_PWD_PROT.Disabled, authenticationRetryLimit);
+            Ntag215AuthConfig auth = new Ntag215AuthConfig(mirrorByte, 0, firstPageAddressToProtect, accessByte, password, pack);
             return auth.Bytes;
         }
+
+        public static byte[] GetDefaultSecuritySetupBytes(string password, string pack)
+        {
+            return GetDefaultSecuritySetupBytes(password, pack, 4, Ntag215AuthConfig.AccessByte.CFGLCK.UserConfigOpen, Ntag215AuthConfig.AccessByte.PROT.ReadWriteProtected, 0);
+        }
+        #endregion
     }
 
     public class Ntag215Command : NFCCommand

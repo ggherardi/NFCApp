@@ -34,11 +34,6 @@ namespace CSharp.NFC
             return resultBuffer;
         }
 
-        public static string GetByteArrayAsHexString(byte[] buffer)
-        {
-            return BitConverter.ToString(buffer);
-        }
-
         public static int GetLastByteNotZeroIndex(byte[] buffer)
         {
             for(int i = buffer.Length - 1; i > -1; i--)
@@ -49,6 +44,16 @@ namespace CSharp.NFC
                 }
             }
             return -1;
+        }
+
+        public static string GetByteArrayAsHexString(byte[] buffer)
+        {
+            return BitConverter.ToString(buffer);
+        }
+
+        public static byte[] GetASCIIStringBytes(string stringToConvert)
+        {
+            return Encoding.ASCII.GetBytes(stringToConvert);
         }
 
         public static int Clamp(this int value, int min, int max)

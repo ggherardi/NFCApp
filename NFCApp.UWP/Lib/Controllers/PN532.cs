@@ -11,7 +11,7 @@ namespace CSharp.NFC.Controllers
     {
         /// <summary>
         /// Input | Class: 0xD4 (1 byte) - Instruction: 0x42 (1 byte) - Data out [] (n bytes)
-        /// Response | 0xD5 (1 byte), 0x43 (1 byte), Status (1 byte) (errors: PN532 User Manual, chapter 7.1. Error handling, pag. 67), DataIn[] (array of raw data)
+        /// Response | 0xD5 (1 byte), 0x43 (1 byte), Status (1 byte) (errors: PN532 User Manual, chapter 7.1. Error handling, pag. 67), DataOut[] (array of raw data)
         /// In order to send a direct transmit to the card, one should a combination of commands, i.e.: _reader.DirectTransmitCommand(payload:{_controller.ModuleDataExchangeCommand(DataOut:{_card.PWD_AUTH(value:{password})})})
         /// Reference: PN532 User Manual, chapter 7.3.9. InCommunicateThru, pag. 136
         /// </summary>
@@ -23,7 +23,7 @@ namespace CSharp.NFC.Controllers
 
         /// <summary>
         /// Input | Class: 0xD4 (1 byte) - Instruction: 0x40 (1 byte) - Tg: {target} (1 byte) - Data out [] (n bytes)
-        /// Response | 0xD5 (1 byte), 0x41 (1 byte), Status (1 byte) (errors: PN532 User Manual, chapter 7.1. Error handling, pag. 67), DataIn[] (array of raw data)
+        /// Response | 0xD5 (1 byte), 0x41 (1 byte), Status (1 byte) (errors: PN532 User Manual, chapter 7.1. Error handling, pag. 67), DataOut[] (array of raw data)
         /// More robust than InCommunicateThru, it can be used to WRITE, READ, FAST_READ and other MIFARE commands (see pag. 130)
         /// Reference: PN532 User Manual, chapter 7.3.8. InDataExchange, pag. 127
         /// </summary>
@@ -99,11 +99,14 @@ namespace CSharp.NFC.Controllers
             NADMissingError = 0x2E
         }
 
-        protected override NFCCommand Get_DataExchangeCommand(byte[] payload)
+        protected override NFCCommand Get_DataExchangeCommand()
         {
-            PN532Command command = new PN532Command(_inDataExchange);
-            command.ConcatBytesToCommand(payload);
-            return command;
+            return new PN532Command(_inDataExchange);
+        }
+
+        protected override NFCCommand Get_InCommunicateThruCommand()
+        {
+            return new PN532Command(_inCommunicateThru);
         }
     }
 

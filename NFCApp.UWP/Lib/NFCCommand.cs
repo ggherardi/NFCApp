@@ -80,6 +80,8 @@ namespace CSharp.NFC
 
         public enum Status
         {
+            [Description("Unset")]
+            Unset = -1,
             [Description("Operation successful")]
             Success = 0x00,
             [Description("Operation failure")]
