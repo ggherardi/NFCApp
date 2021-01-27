@@ -117,8 +117,8 @@ namespace CSharp.NFC.Cards
 
         public static byte[] GetSecuritySetupBytes(string password, string pack)
         {
-            Ntag215AuthConfig.MirrorByte mirrorByte = new Ntag215AuthConfig.MirrorByte(Ntag215AuthConfig.MirrorByte.MIRROR_CONF.NoMirror, Ntag215AuthConfig.MirrorByte.MIRROR_BYTE.First, Ntag215AuthConfig.MirrorByte.STRG_MOD_EN.Disabled);
-            Ntag215AuthConfig.AccessByte accessByte = new Ntag215AuthConfig.AccessByte(Ntag215AuthConfig.AccessByte.PROT.ReadWriteProtected, Ntag215AuthConfig.AccessByte.CFGLCK.UserConfigOpen, Ntag215AuthConfig.AccessByte.NFC_CNT_EN.Disabled, Ntag215AuthConfig.AccessByte.NFC_CNT_PWD_PROT.Disabled, 1);
+            Ntag215AuthConfig.MirrorByte mirrorByte = new Ntag215AuthConfig.MirrorByte(Ntag215AuthConfig.MirrorByte.MIRROR_CONF.NoMirror, Ntag215AuthConfig.MirrorByte.MIRROR_BYTE.First, Ntag215AuthConfig.MirrorByte.STRG_MOD_EN.Enabled);
+            Ntag215AuthConfig.AccessByte accessByte = new Ntag215AuthConfig.AccessByte(Ntag215AuthConfig.AccessByte.PROT.WriteProtected, Ntag215AuthConfig.AccessByte.CFGLCK.UserConfigOpen, Ntag215AuthConfig.AccessByte.NFC_CNT_EN.Disabled, Ntag215AuthConfig.AccessByte.NFC_CNT_PWD_PROT.Disabled, 0);
             Ntag215AuthConfig auth = new Ntag215AuthConfig(mirrorByte, 0, 4, accessByte, password, pack);
             return auth.Bytes;
         }

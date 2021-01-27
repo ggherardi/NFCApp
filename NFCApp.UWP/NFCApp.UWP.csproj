@@ -90,7 +90,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Lib\Controllers\NFCController.cs" />
-    <Compile Include="Lib\Controllers\PN533.cs" />
+    <Compile Include="Lib\Controllers\PN532.cs" />
     <Compile Include="Lib\NFCCommand.cs" />
     <Compile Include="Lib\NFCOperation.cs" />
     <Compile Include="Lib\Readers\NFCReader.cs" />

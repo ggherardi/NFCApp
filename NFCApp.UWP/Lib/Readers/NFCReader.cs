@@ -69,7 +69,7 @@ namespace CSharp.NFC.Readers
         /// This constructor initialises the NFC reader with the provided SmartCardReader.
         /// </summary>
         /// <param name="reader"></param>
-        protected NFCReader(SmartCardReader reader) : this(reader, new PN533()) { }
+        protected NFCReader(SmartCardReader reader) : this(reader, new PN532()) { }
 
         /// <summary>
         /// This constructor finds the first connected reader.
@@ -116,7 +116,7 @@ namespace CSharp.NFC.Readers
             {
                 byte[] responseBuffer = new byte[responseBufferLength];
                 int responseLength = responseBuffer.Length;
-                operation.Status = Winscard.SCardControl(ConnectedCard.CardNumber, Winscard.SCARD_CTL_CODE(3500), ref command[0], command.Length, ref responseBuffer[0], responseBuffer.Length, ref responseLength);
+                operation.Status = Winscard.SCardControl(ConnectedCard.CardNumber, controlCode, ref command[0], command.Length, ref responseBuffer[0], responseBuffer.Length, ref responseLength);
             }
             catch(Exception ex)
             {
@@ -146,6 +146,11 @@ namespace CSharp.NFC.Readers
         {
             return Transmit(new NFCOperation(Get_DirectTransmitCommand(directCommand)));
         }
+
+        //public NFCOperation TransmitDirectCommand(byte[] directCommand)
+        //{
+        //    return Control(Get_DirectTransmitCommand(directCommand).CommandBytes, Winscard.SCARD_CTL_CODE(3500));
+        //}
 
         public NFCOperation GetCardGuid()
         {
@@ -224,8 +229,6 @@ namespace CSharp.NFC.Readers
                 NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
                 NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(dataExchangeCommand.CommandBytes.Concat(cardCommand.CommandBytes).ToArray());
                 operation = new NFCOperation(directTransmitCommand, dataExchangeCommand, cardCommand, directTransmitCommand.CommandBytes);
-                //NFCCommand directTransmitCommand = _reader.Get_DirectTransmitCommand(cardCommand.CommandBytes);
-                //operation = new NFCOperation(directTransmitCommand, null, cardCommand, directTransmitCommand.CommandBytes);
                 operation = TransmitCardCommand(operation);
             }
             catch(Exception ex)

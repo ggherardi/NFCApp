@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace CSharp.NFC.Controllers
 {
-    public class PN533 : NFCController
+    public class PN532 : NFCController
     {
         /// <summary>
         /// Input | Class: 0xD4 (1 byte) - Instruction: 0x42 (1 byte) - Data out [] (n bytes)
-        /// Response | 0xD5 (1 byte), 0x43 (1 byte), Status (1 byte) (errors: UM0801-03 (PN533 User Manual), chapter 8.1. Error handling, pag. 50), DataIn[] (array of raw data)
+        /// Response | 0xD5 (1 byte), 0x43 (1 byte), Status (1 byte) (errors: PN532 User Manual, chapter 7.1. Error handling, pag. 67), DataIn[] (array of raw data)
         /// In order to send a direct transmit to the card, one should a combination of commands, i.e.: _reader.DirectTransmitCommand(payload:{_controller.ModuleDataExchangeCommand(DataOut:{_card.PWD_AUTH(value:{password})})})
-        /// Reference: UM0801-03 (PN533 User Manual), chapter 8.4.9. InCommunicateThru, pag. 109
+        /// Reference: PN532 User Manual, chapter 7.3.9. InCommunicateThru, pag. 136
         /// </summary>
-        private readonly PN533Command _inCommunicateThru = new PN533Command()
+        private readonly PN532Command _inCommunicateThru = new PN532Command()
         {
             CommandBytes = new byte[] { 0xD4, 0x42 },
             Response = new NFCCommandResponse() { HeaderBytes = new byte[] { 0xD5, 0x43, }, MinBufferLength = 3 }
@@ -23,11 +23,11 @@ namespace CSharp.NFC.Controllers
 
         /// <summary>
         /// Input | Class: 0xD4 (1 byte) - Instruction: 0x40 (1 byte) - Tg: {target} (1 byte) - Data out [] (n bytes)
-        /// Response | 0xD5 (1 byte), 0x41 (1 byte), Status (1 byte) (errors: UM0801-03 (PN533 User Manual), chapter 8.1. Error handling, pag. 50), DataIn[] (array of raw data)
-        /// More robust than InCommunicateThru
-        /// Reference: UM0801-03 (PN533 User Manual), chapter 8.4.8. InDataExchange, pag. 100
+        /// Response | 0xD5 (1 byte), 0x41 (1 byte), Status (1 byte) (errors: PN532 User Manual, chapter 7.1. Error handling, pag. 67), DataIn[] (array of raw data)
+        /// More robust than InCommunicateThru, it can be used to WRITE, READ, FAST_READ and other MIFARE commands (see pag. 130)
+        /// Reference: PN532 User Manual, chapter 7.3.8. InDataExchange, pag. 127
         /// </summary>
-        private readonly PN533Command _inDataExchange = new PN533Command()
+        private readonly PN532Command _inDataExchange = new PN532Command()
         {
             CommandBytes = new byte[] { 0xD4, 0x40, 0x00 },
             Response = new NFCCommandResponse() { HeaderBytes = new byte[] { 0xD5, 0x41, }, MinBufferLength = 3 }
@@ -35,7 +35,7 @@ namespace CSharp.NFC.Controllers
 
         /// <summary>
         /// Controller errors
-        /// Reference: UM0801-03 (PN533 User Manual), chapter 8.1. Error Handling, pag. 50
+        /// Reference: UM0801-03 (PN532 User Manual), chapter 8.1. Error Handling, pag. 50
         /// </summary>
         public enum Status
         {
@@ -67,7 +67,7 @@ namespace CSharp.NFC.Controllers
             InternalBufferOverflow = 0x0E,
             [Description("Invalid parameter (range, format, ...)")]
             InvalidParameter = 0x10,
-            [Description("DEP Protocol: the PN533 configured in target mode does not support the command received from the initiator")]
+            [Description("DEP Protocol: the PN532 configured in target mode does not support the command received from the initiator")]
             CommandNotSupported = 0x12,
             [Description("DEP Protocol, MIFARE or ISO/IEC14443-4: the data format does not match to the specification")]
             DataFormatError = 0x13,
@@ -101,20 +101,20 @@ namespace CSharp.NFC.Controllers
 
         protected override NFCCommand Get_DataExchangeCommand(byte[] payload)
         {
-            PN533Command command = new PN533Command(_inDataExchange);
+            PN532Command command = new PN532Command(_inDataExchange);
             command.ConcatBytesToCommand(payload);
             return command;
         }
     }
 
-    public class PN533Command : NFCCommand
+    public class PN532Command : NFCCommand
     {
-        public PN533Command(PN533Command commandToClone) : base(commandToClone) 
+        public PN532Command(PN532Command commandToClone) : base(commandToClone) 
         {
             ExtractPayload = _extractPayload;
         }
 
-        public PN533Command() : base() { }
+        public PN532Command() : base() { }
 
         private NFCPayload _extractPayload(byte[] responseBuffer)
         {
@@ -130,7 +130,7 @@ namespace CSharp.NFC.Controllers
             if(isHeaderCorrect)
             {
                 int responseStatusByte = responseBuffer[2];
-                PN533.Status responseStatus = (PN533.Status)responseStatusByte;
+                PN532.Status responseStatus = (PN532.Status)responseStatusByte;
                 if(responseStatusByte == 0)
                 {
                     Response.SetCommandSuccessful(responseStatusByte, Utility.GetEnumDescription(responseStatus));
