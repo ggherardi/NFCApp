@@ -169,10 +169,20 @@ namespace CSharp.NFC.Readers
             return Transmit(new NFCOperation(Get_ReadValueBlockCommand(block)));
         }
 
-        //public NFCOperation ReadNDEFMessages()
-        //{
-
-        //}
+        public void ReadNDEFMessages()
+        {
+            byte[] bytesToRead = new byte[16];            
+            NFCOperation operation = ReadBlocks(4);
+            bytesToRead = operation.ResponseBuffer;
+            NDEFMessage ndefMessage = new NDEFMessage(bytesToRead);
+            if(ndefMessage.LengthBytes > 0)
+            {
+                while (ndefMessage.ReadByesIntoMessage(bytesToRead))
+                {
+                    bytesToRead = operation.ResponseBuffer;
+                }
+            }            
+        }
         #endregion
 
         #region Writing commands

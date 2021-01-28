@@ -15,5 +15,7 @@ namespace CSharp.NFC.NDEF
         public abstract int TypeIdentifier { get; }
         public abstract int TypeLength { get; }
         public abstract byte[] GetBytes();       
+
+        public abstract void BuildRecordFromBytes(byte[] bytes);
     }    
 }

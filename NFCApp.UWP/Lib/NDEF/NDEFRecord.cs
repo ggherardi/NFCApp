@@ -54,7 +54,7 @@ namespace CSharp.NFC.NDEF
             _typeIdentifierField = (byte)_NDEFRecord.TypeIdentifier;
 
             // Setting ID Length and ID bytes only if the flag has IL field = 1
-            _hasID = flag.IDLength == 1;
+            _hasID = flag.IDLengthBit == NDEFRecordFlag.IDLength.True;
             if (_hasID)
             {
                 _idLengthField = (byte)idLength;
@@ -63,16 +63,18 @@ namespace CSharp.NFC.NDEF
 
             // Setting Flag field bits
             _flagObject = flag;
-            if(_flagObject.ShortRecord == 1 && !_isShortRecord)
+            if(_flagObject.ShortRecordBit == NDEFRecordFlag.ShortRecord.True && !_isShortRecord)
             {
-                _flagObject.ShortRecord = 0;
+                _flagObject.ShortRecordBit = 0;
             }
             _flagField = flag.GetByte();
         }
 
         public NDEFRecord(NDEFRecordType recordType, NDEFRecordFlag flag, bool chunked = false) : this(recordType, flag, 0, 0, chunked) { }
 
-        public NDEFRecord(NDEFRecordType recordType, bool chunked = false) : this(recordType, new NDEFRecordFlag() { MessageBegin = 1, MessageEnd = 1, Chunk = 0, ShortRecord = 1, IDLength = 0, TNF = NDEFRecordFlag.TypeNameFormat.NFCForumWellKnownType}, 0, 0, chunked) { }
+        public NDEFRecord(NDEFRecordType recordType, bool chunked = false) : this(recordType, new NDEFRecordFlag(NDEFRecordFlag.MessageBegin.True, NDEFRecordFlag.MessageEnd.True, NDEFRecordFlag.Chunk.False, NDEFRecordFlag.ShortRecord.True, NDEFRecordFlag.IDLength.False, NDEFRecordFlag.TypeNameFormat.NFCForumWellKnownType), chunked) { }
+
+        public NDEFRecord() { }
 
         public byte[] GetBytes()
         {
@@ -100,28 +102,70 @@ namespace CSharp.NFC.NDEF
     /// </summary>
     public class NDEFRecordFlag
     {
-        public int MessageBegin { get; set; }
-        public int MessageEnd { get; set; }
-        public int Chunk { get; set; }
-        public int ShortRecord { get; set; }
-        public int IDLength { get; set; }
-        public TypeNameFormat TNF { get; set; }
+        public MessageBegin MessageBeginBit { get; set; }
+        public MessageEnd MessageEndBit { get; set; }
+        public Chunk ChunkBit { get; set; }
+        public ShortRecord ShortRecordBit { get; set; }
+        public IDLength IDLengthBit { get; set; }
+        public TypeNameFormat TNFBits { get; set; }
 
-        public NDEFRecordFlag(bool messageBegin, bool messageEnd, bool chunk, bool shortRecord, bool idLength, TypeNameFormat tnf)
+        public NDEFRecordFlag(MessageBegin messageBegin, MessageEnd messageEnd, Chunk chunk, ShortRecord shortRecord, IDLength idLength, TypeNameFormat tnf)
         {
-            MessageBegin = messageBegin ? 0x80 : 0x00;
-            MessageEnd = messageEnd ? 0x40 : 0x00;
-            Chunk = chunk ? 0x20 : 0x00;
-            ShortRecord = shortRecord ? 0x10 : 0x00;
-            IDLength = idLength ? 0x08 : 0x00;
-            TNF = tnf;
+            MessageBeginBit = messageBegin;
+            MessageEndBit = messageEnd;
+            ChunkBit = chunk;
+            ShortRecordBit = shortRecord;
+            IDLengthBit = idLength;
+            TNFBits = tnf;
         }
 
         public NDEFRecordFlag() { }
 
+        public static NDEFRecordFlag GetNDEFRecordFlagFromByte (byte flagByte)
+        {
+            NDEFRecordFlag recordFlag = new NDEFRecordFlag();           
+            recordFlag.MessageBeginBit = (MessageBegin)(flagByte & (int)MessageBegin.True);
+            recordFlag.MessageEndBit = (MessageEnd)(flagByte & (int)MessageEnd.True);
+            recordFlag.ChunkBit = (Chunk)(flagByte & (int)Chunk.True);
+            recordFlag.ShortRecordBit = (ShortRecord)(flagByte & (int)ShortRecord.True);
+            recordFlag.IDLengthBit = (IDLength)(flagByte & (int)IDLength.True);
+            recordFlag.TNFBits = (TypeNameFormat)(flagByte & (int)TypeNameFormat.Reserved);
+            return recordFlag;
+        }
+
         public byte GetByte()
         {
-            return (byte)(((((((((((0 | MessageBegin) << 1) | MessageEnd) << 1) | Chunk) << 1) | ShortRecord) << 1) | IDLength) << 3) | (int)TNF);
+            return (byte)(0 | (int)MessageBeginBit | (int)MessageEndBit | (int)ChunkBit | (int)ShortRecordBit | (int)IDLengthBit | (int)TNFBits);
+        }
+
+        public enum MessageBegin
+        {
+            True = 0x80,
+            False = 0x00
+        }
+
+        public enum MessageEnd
+        {
+            True = 0x40,
+            False = 0x00
+        }
+
+        public enum Chunk
+        {
+            True = 0x20,
+            False = 0x00
+        }
+
+        public enum ShortRecord
+        {
+            True = 0x10,
+            False = 0x00
+        }
+
+        public enum IDLength
+        {
+            True = 0x08,
+            False = 0x00
         }
 
         public enum TypeNameFormat

@@ -16,6 +16,6 @@ namespace CSharp.NFC.NDEF
         /// <summary>
         /// Tag Field Value byte for "Terminator TLV"        
         /// </summary>
-        public override byte Tag { get => 0xFE; }
+        public override byte TagByte { get => 0xFE; }
     }
 }

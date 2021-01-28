@@ -28,23 +28,30 @@ namespace CSharp.NFC.NDEF
     /// </summary>
     public abstract class TLVBlock
     {
-        protected byte _tag;
-        protected byte[] _length = new byte[] { };
-        protected byte[] _value = new byte[] { };
+        protected byte _tagByte;
+        protected byte[] _lengthBytes = new byte[] { };
+        protected byte[] _valueBytes = new byte[] { };
 
         /// <summary>
         /// Tag Field Value byte
         /// Reference: NFCForum-Type-2-Tag_1.1 specifications, chapter 2.3 TLV blocks, pag. 10, Table 2: Defined TLV blocks
         /// </summary>
-        public abstract byte Tag { get; }
-        public virtual byte[] Length { get => _length; protected set => _length = value; }
-        public virtual byte[] Value { get => _value; protected set => _value = value; }
+        public abstract byte TagByte { get; }
+        public virtual byte[] LengthBytes { get => _lengthBytes; protected set => _lengthBytes = value; }
+        public virtual byte[] ValueBytes { get => _valueBytes; protected set => _valueBytes = value; }
+        public virtual int Length { get; set; }        
 
         public virtual byte[] GetFormattedBlock()
         {
-            return (new byte[] { Tag }).Concat(Length).Concat(Value).ToArray();
+            return (new byte[] { TagByte }).Concat(LengthBytes).Concat(ValueBytes).ToArray();
         }
 
+        /// <summary>
+        /// The Length field for a TLV block can be either 0, 1 or 3 bytes long.
+        /// Reference: NFCForum-Type-2-Tag_1.1 specifications, chapter 2.3 TLV block, pag. 9
+        /// </summary>
+        /// <param name="valueLength"></param>
+        /// <returns></returns>
         public static byte[] GetValueLengthInBytes(int valueLength)
         {
             byte[] valueLengthInBytes = BitConverter.GetBytes(valueLength);
@@ -61,6 +68,29 @@ namespace CSharp.NFC.NDEF
                 valueLengthInBytes = new byte[] { 0xFF, valueLengthInBytes[2], valueLengthInBytes[3] };
             }
             return valueLengthInBytes;
+        }
+
+        /// <summary>
+        /// Retrieves the integer inside the Length byte(s) (1-3, varying on the length) of the TLV block
+        /// </summary>
+        /// <param name="lengthBytes"></param>
+        /// <returns></returns>
+        public static int GetLengthFromBytes(byte[] lengthBytes)
+        {
+            byte[] valueBytes = new byte[2];
+            // If the first byte is 0xFF, it means that the length is in the 2 following bytes
+            if (lengthBytes[0] == 0xFF)
+            {
+                // Copies the 2 bytes following 0xFF inside another array
+                Array.Copy(lengthBytes, 1, valueBytes, 0, 2);
+            }
+            else
+            {
+                // Copies the single byte in another array
+                valueBytes[1] = lengthBytes[0];
+            }
+            // Calculate the integer by adding the byte(s)
+            return (valueBytes[0] > 0 ? valueBytes[0] + 255 : 0) + valueBytes[1];
         }
     }  
 }
