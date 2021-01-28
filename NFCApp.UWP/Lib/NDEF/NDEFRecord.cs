@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace CSharp.NFC.NDEF
 {
     /// <summary>
-    /// Single Record as specified in the "NFC Data Exchange Format (NDEF)" TS, chapter 3.2
+    /// NDEF Record format
+    /// Reference: NFC Data Exchange Format (NDEF), chapter 3.2, pag. 14
     /// </summary>
     public class NDEFRecord
     {
@@ -71,7 +72,7 @@ namespace CSharp.NFC.NDEF
 
         public NDEFRecord(NDEFRecordType recordType, NDEFRecordFlag flag, bool chunked = false) : this(recordType, flag, 0, 0, chunked) { }
 
-        public NDEFRecord(NDEFRecordType recordType, bool chunked = false) : this(recordType, new NDEFRecordFlag() { MessageBegin = 1, MessageEnd = 1, Chunk = 0, ShortRecord = 1, IDLength = 0, TypeNameFormat = TypeNameFormat.NFCForumWellKnownType}, 0, 0, chunked) { }
+        public NDEFRecord(NDEFRecordType recordType, bool chunked = false) : this(recordType, new NDEFRecordFlag() { MessageBegin = 1, MessageEnd = 1, Chunk = 0, ShortRecord = 1, IDLength = 0, TNF = NDEFRecordFlag.TypeNameFormat.NFCForumWellKnownType}, 0, 0, chunked) { }
 
         public byte[] GetBytes()
         {
@@ -94,7 +95,8 @@ namespace CSharp.NFC.NDEF
     }
 
     /// <summary>
-    /// Class used to set all the bits required in the flag as specified in the "NFC Data Exchange Format (NDEF)" TS, chapters 3.2.1 - 3.2.6
+    /// Class used to set all the bits required in the flag
+    /// Reference: NFC Data Exchange Format (NDEF) Technical Specifications, chapters 3.2.1 - 3.2.6, pag. 14 - 16
     /// </summary>
     public class NDEFRecordFlag
     {
@@ -103,7 +105,7 @@ namespace CSharp.NFC.NDEF
         public int Chunk { get; set; }
         public int ShortRecord { get; set; }
         public int IDLength { get; set; }
-        public TypeNameFormat TypeNameFormat { get; set; }
+        public TypeNameFormat TNF { get; set; }
 
         public NDEFRecordFlag(bool messageBegin, bool messageEnd, bool chunk, bool shortRecord, bool idLength, TypeNameFormat tnf)
         {
@@ -112,25 +114,26 @@ namespace CSharp.NFC.NDEF
             Chunk = chunk ? 0x20 : 0x00;
             ShortRecord = shortRecord ? 0x10 : 0x00;
             IDLength = idLength ? 0x08 : 0x00;
-            TypeNameFormat = tnf;
+            TNF = tnf;
         }
 
         public NDEFRecordFlag() { }
 
         public byte GetByte()
         {
-            return (byte)(((((((((((0 | MessageBegin) << 1) | MessageEnd) << 1) | Chunk) << 1) | ShortRecord) << 1) | IDLength) << 3) | (int)TypeNameFormat);
+            return (byte)(((((((((((0 | MessageBegin) << 1) | MessageEnd) << 1) | Chunk) << 1) | ShortRecord) << 1) | IDLength) << 3) | (int)TNF);
         }
-    }
-    public enum TypeNameFormat
-    {
-        Empty = 0x00,
-        NFCForumWellKnownType = 0x01,
-        MediaType = 0x02,
-        AbsoluteURI = 0x03,
-        NFCForumExternalType = 0x04,
-        Unknown = 0x05,
-        Unchanged = 0x06,        
-        Reserved = 0x07
+
+        public enum TypeNameFormat
+        {
+            Empty = 0x00,
+            NFCForumWellKnownType = 0x01,
+            MediaType = 0x02,
+            AbsoluteURI = 0x03,
+            NFCForumExternalType = 0x04,
+            Unknown = 0x05,
+            Unchanged = 0x06,
+            Reserved = 0x07
+        }
     }
 }

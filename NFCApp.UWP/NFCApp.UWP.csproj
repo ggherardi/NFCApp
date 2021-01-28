@@ -91,6 +91,9 @@
   <ItemGroup>
     <Compile Include="Lib\Controllers\NFCController.cs" />
     <Compile Include="Lib\Controllers\PN532.cs" />
+    <Compile Include="Lib\NDEF\RecordTypes\RTDText.cs" />
+    <Compile Include="Lib\NDEF\TLVTypes\NDEFMessage.cs" />
+    <Compile Include="Lib\NDEF\TLVTypes\Terminator.cs" />
     <Compile Include="Lib\NFCCommand.cs" />
     <Compile Include="Lib\NFCOperation.cs" />
     <Compile Include="Lib\Readers\NFCReader.cs" />

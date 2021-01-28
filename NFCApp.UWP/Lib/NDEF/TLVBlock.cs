@@ -8,7 +8,23 @@ using System.Threading.Tasks;
 namespace CSharp.NFC.NDEF
 {
     /// <summary>
-    /// Tag, Length, Value block template as specified in the "Type 2 Tag Operation Specification" TS, chapter 2.3
+    /// Tag, Length, Value block template 
+    /// Reference:  NFCForum-Type-2-Tag_1.1 specifications, chapter 2.3 TLV blocks, pag. 9
+    /// Example of TLV with NDEFMessage as Text Record Type Definition:
+    /// {0x03 - 0x0C - [0xD1 - 0x01 - 0x08 - 0x54 - (0x02 - 0x65 - 0x6E - (0x61 - 0x62 - 0x63 - 0x64 - 0x65))]}
+    /// - TLV headers
+    /// 0x03: Tag byte (0x03 for NDEF Message)
+    /// 0x0C: Length byte of the Record (0x0C = 12)
+    /// - NDEFMessage headers
+    /// 0xD1: FLAG byte of the Record (0xD1 = 209, meaning: MB = 1, ME = 1, CF = 0, SR = 1, IL = 0, TNF = 001 (well-known type))  
+    /// 0x01: Type Length byte (0x01 = well-known type)
+    /// 0x08: Payload Length (0x08 = 8, including Text Record Type header)
+    /// 0x54: Type Identifier (0x54 = "T", indicating Text Record Type)
+    /// - Record Type headers
+    /// 0x02: Flag byte (0x02 = 2, meaning: UTF8/16 = 0 (UTF8), Bit6 = 0 (Reserved), Bit5_0 = 00010 (Language Code with 2 bytes))
+    /// 0x65: Language Code byte 1 (0x65 = "e")
+    /// 0x6E: Language Code byte 2 (0x6E = "n") so the Language is "en" (English)
+    /// 0x61, 0x62, 0x63, 0x64, 0x65: Actual text Payload ("abcde")
     /// </summary>
     public abstract class TLVBlock
     {
@@ -16,6 +32,10 @@ namespace CSharp.NFC.NDEF
         protected byte[] _length = new byte[] { };
         protected byte[] _value = new byte[] { };
 
+        /// <summary>
+        /// Tag Field Value byte
+        /// Reference: NFCForum-Type-2-Tag_1.1 specifications, chapter 2.3 TLV blocks, pag. 10, Table 2: Defined TLV blocks
+        /// </summary>
         public abstract byte Tag { get; }
         public virtual byte[] Length { get => _length; protected set => _length = value; }
         public virtual byte[] Value { get => _value; protected set => _value = value; }
@@ -25,7 +45,7 @@ namespace CSharp.NFC.NDEF
             return (new byte[] { Tag }).Concat(Length).Concat(Value).ToArray();
         }
 
-        public byte[] GetValueLengthInBytes(int valueLength)
+        public static byte[] GetValueLengthInBytes(int valueLength)
         {
             byte[] valueLengthInBytes = BitConverter.GetBytes(valueLength);
             if (BitConverter.IsLittleEndian)
@@ -34,7 +54,7 @@ namespace CSharp.NFC.NDEF
             }
             if (valueLength < 255)
             {
-                valueLengthInBytes = new byte[] { (byte)valueLengthInBytes[3] };
+                valueLengthInBytes = new byte[] { valueLengthInBytes[3] };
             }
             else
             {
@@ -42,35 +62,5 @@ namespace CSharp.NFC.NDEF
             }
             return valueLengthInBytes;
         }
-    }
-
-    /// <summary>
-    /// NDEFMessage Tag Length Value Block as specified in the "Type 2 Tag Operation Specification" TS, chapter 2.3.4
-    /// </summary>
-    public class NDEFMessage : TLVBlock
-    {
-        public override byte Tag { get => 0x03; }
-
-        public NDEFMessage(NDEFRecord record) { }
-
-        public NDEFMessage(string value)
-        {
-            // in base alla lunghezza del testo potrei aver bisogno di più record!
-            RTDText text = new RTDText(value, RTDText.EnglishLanguage, RTDText.TextEncoding.UTF8);
-            NDEFRecord record = new NDEFRecord(text);
-            Value = record.GetBytes();
-            Length = GetValueLengthInBytes(Value.Length);
-        }
-
-        public override byte[] GetFormattedBlock()
-        {
-            byte[] tlvBlock = new byte[] { Tag };
-            return tlvBlock.Concat(Length).Concat(Value).Concat(new Terminator().GetFormattedBlock()).ToArray();
-        }
-    }
-
-    public class Terminator : TLVBlock
-    {
-        public override byte Tag { get => 0xFE; }
-    }    
+    }  
 }

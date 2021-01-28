@@ -1,3 +1,7 @@
 .vs
 .vs/*
+bin/
+obj/
+obj/*
+bin/*
 /NFCApp/obj/Debug/netstandard2.0/NFCApp.csprojAssemblyReference.cache

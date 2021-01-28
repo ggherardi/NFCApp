@@ -107,7 +107,7 @@ namespace CSharp.NFC.Readers
         }
         #endregion
 
-        #region Commands
+        #region Low level commands
         public NFCOperation Control(byte[] command, uint controlCode, int responseBufferLength = 255)
         {
             NFCOperation operation = new NFCOperation();
@@ -146,7 +146,9 @@ namespace CSharp.NFC.Readers
         {
             return Transmit(new NFCOperation(Get_DirectTransmitCommand(directCommand)));
         }
+        #endregion
 
+        #region Reading commands
         public NFCOperation GetCardGuid()
         {
             return Transmit(new NFCOperation(Get_GetUIDCommand()));
@@ -167,6 +169,13 @@ namespace CSharp.NFC.Readers
             return Transmit(new NFCOperation(Get_ReadValueBlockCommand(block)));
         }
 
+        //public NFCOperation ReadNDEFMessages()
+        //{
+
+        //}
+        #endregion
+
+        #region Writing commands
         private NFCOperation WriteBlocks(byte blockNumber, byte[] dataIn, int numberOfBytesToUpdate)
         {
             return Transmit(new NFCOperation(Get_UpdateBinaryBlockCommand(blockNumber, dataIn, numberOfBytesToUpdate)));
@@ -189,12 +198,12 @@ namespace CSharp.NFC.Readers
             return operations;
         }
 
-        public List<NFCOperation> WriteNDEFMessage(string value, int startingPage)
+        private List<NFCOperation> WriteTextNDEFMessage(string text, int startingPage)
         {
             List<NFCOperation> operations = null;
             try
             {
-                NDEFMessage message = new NDEFMessage(value);
+                NDEFMessage message = NDEFMessage.GetTextNDEFMessage(text);
                 byte[] blockBytes = message.GetFormattedBlock();
                 operations = WriteBlocks(blockBytes, startingPage);
             }
@@ -205,13 +214,14 @@ namespace CSharp.NFC.Readers
             return operations;
         }
 
-        public void WriteNDEFMessage(string value)
+        public List<NFCOperation> WriteTextNDEFMessage(string value)
         {
-            WriteNDEFMessage(value, 4);
+            return WriteTextNDEFMessage(value, 4);
         }
+        #endregion
 
-        #region Card commands
-        public NFCOperation TransmitCardCommand(NFCCommand communicationCommand, NFCCommand cardCommand)
+        #region Card specific commands
+        private NFCOperation TransmitCardCommand(NFCCommand communicationCommand, NFCCommand cardCommand)
         {
             NFCOperation operation = null;
             try
@@ -229,13 +239,13 @@ namespace CSharp.NFC.Readers
             //return Transmit(operation);
         }
 
-        public NFCOperation TransmitCardCommandWithDataExchange(NFCCommand cardCommand)
+        private NFCOperation TransmitCardCommandWithDataExchange(NFCCommand cardCommand)
         {
             NFCCommand dataExchangeCommand = _controller.GetDataExchangeCommand();
             return TransmitCardCommand(dataExchangeCommand, cardCommand);
         }
 
-        public NFCOperation TransmitCardCommandWithInCommunicateThru(NFCCommand cardCommand)
+        private NFCOperation TransmitCardCommandWithInCommunicateThru(NFCCommand cardCommand)
         {
             NFCCommand inCommunicateThru = _controller.GetInCommunicateThruCommand();
             return TransmitCardCommand(inCommunicateThru, cardCommand);
@@ -255,7 +265,6 @@ namespace CSharp.NFC.Readers
         {
             return WriteBlocks(securityConfigurationBytes, _connectedCard.UserConfigurationStartingPage);
         }
-        #endregion
         #endregion
 
         #region Aux methods
