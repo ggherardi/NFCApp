@@ -9,8 +9,9 @@ namespace CSharp.NFC.NDEF
 {
     public class RTDText : NDEFRecordType
     {
-        public override int TypeIdentifier { get => 0x54; } // Record type "T", Text
-        public override int TypeLength { get => 0x01; }
+        public override int TypeIdentifier => 0x54; // Record type "T", Text
+        public override int TypeLength => 0x01;
+        public override int HeaderLength => 3;
 
         private int _flag = 0x00;
         private byte[] _language;
@@ -42,11 +43,12 @@ namespace CSharp.NFC.NDEF
         {
             _flag = bytes[0];
             _language = new byte[] { bytes[1], bytes[2] };
+            _textBytes = new byte[] { };
         }
 
-        public void AddTextToPayload(byte[] bytes)
+        public override void AddTextToPayload(byte[] bytes)
         {
-            _textBytes = bytes;
+            _textBytes = _textBytes.Concat(bytes).ToArray();
         }
 
         public string GetText()
@@ -55,6 +57,16 @@ namespace CSharp.NFC.NDEF
             foreach(byte b in _textBytes)
             {
                 text = $"{text}{(char)b}";
+            }
+            return text;
+        }
+
+        public override string ToString()
+        {
+            string text = string.Empty;
+            for(int i = 0; i < _textBytes.Length; i++)
+            {
+                text += $"{(char)_textBytes[i]}";
             }
             return text;
         }

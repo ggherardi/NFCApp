@@ -13,35 +13,33 @@ namespace CSharp.NFC.NDEF
     /// </summary>
     public class NDEFRecord
     {
-        // Flag field: (MB, ME, CF, SR, IL, TNF)
-        private readonly NDEFRecordFlag _flagObject;
-        private readonly byte _flagField;
-        private readonly byte _typeLengthField;
-        private readonly byte[] _payloadLengthField;
-        private readonly byte _idLengthField;
-        private readonly byte _typeIdentifierField;
-        private readonly byte _idField;
-        private readonly NDEFRecordType _NDEFRecord;
-        private readonly byte[] _NDEFRecordPayloadBytes;
-
-        public NDEFRecordFlag RecordFlag { get => _flagObject; }
-        public NDEFRecordType RecordType { get => _NDEFRecord; }
 
         private bool _isShortRecord;
         private bool _hasID;
+
+        // Flag field: (MB, ME, CF, SR, IL, TNF)
+        public NDEFRecordFlag RecordFlag { get; set; }
+        public byte FlagField { get; set; }
+        public byte TypeLengthField { get; set; }
+        public byte[] PayloadLengthField { get; set; }
+        public byte IDLengthField { get; set; }
+        public byte TypeIdentifierField { get; set; }
+        public byte IDField { get; set; }
+        public NDEFRecordType RecordType { get; set; }
+        public byte[] NDEFRecordPayloadBytes { get; set; }
 
         public NDEFRecord(NDEFRecordType recordType, NDEFRecordFlag flag, int idLength, int id, bool chunk)
         {
             // Add management for chunked record, not required right now
             // Getting NDEFRecordType byte
-            _NDEFRecord = recordType;
-            _NDEFRecordPayloadBytes = _NDEFRecord.GetBytes();
+            RecordType = recordType;
+            NDEFRecordPayloadBytes = RecordType.GetBytes();
 
             // Determining payload length byte/bytes
-            byte[] payloadLength = BitConverter.GetBytes(_NDEFRecordPayloadBytes.Length);
-            _isShortRecord = _NDEFRecordPayloadBytes.Length <= 255;
+            byte[] payloadLength = BitConverter.GetBytes(NDEFRecordPayloadBytes.Length);
+            _isShortRecord = NDEFRecordPayloadBytes.Length <= 255;
             int numberOfPayloadLengthFields = _isShortRecord ? 1 : 4;
-            _payloadLengthField = _isShortRecord ? new byte[numberOfPayloadLengthFields] : new byte[numberOfPayloadLengthFields];            
+            PayloadLengthField = _isShortRecord ? new byte[numberOfPayloadLengthFields] : new byte[numberOfPayloadLengthFields];            
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(payloadLength);
@@ -49,28 +47,28 @@ namespace CSharp.NFC.NDEF
             for (int i = 0; i < numberOfPayloadLengthFields; i++)
             {
                 int j = 3;
-                _payloadLengthField[i] = payloadLength[j--];
+                PayloadLengthField[i] = payloadLength[j--];
             }
 
             // Setting Type Length and Type bytes
-            _typeLengthField = (byte)_NDEFRecord.TypeLength;
-            _typeIdentifierField = (byte)_NDEFRecord.TypeIdentifier;
+            TypeLengthField = (byte)RecordType.TypeLength;
+            TypeIdentifierField = (byte)RecordType.TypeIdentifier;
 
             // Setting ID Length and ID bytes only if the flag has IL field = 1
             _hasID = flag.IDLengthBit == NDEFRecordFlag.IDLength.True;
             if (_hasID)
             {
-                _idLengthField = (byte)idLength;
-                _idField = (byte)id;
+                IDLengthField = (byte)idLength;
+                IDField = (byte)id;
             }
 
             // Setting Flag field bits
-            _flagObject = flag;
-            if(_flagObject.ShortRecordBit == NDEFRecordFlag.ShortRecord.True && !_isShortRecord)
+            RecordFlag = flag;
+            if(RecordFlag.ShortRecordBit == NDEFRecordFlag.ShortRecord.True && !_isShortRecord)
             {
-                _flagObject.ShortRecordBit = 0;
+                RecordFlag.ShortRecordBit = 0;
             }
-            _flagField = flag.GetByte();
+            FlagField = flag.GetByte();
         }
 
         public NDEFRecord(NDEFRecordType recordType, NDEFRecordFlag flag, bool chunked = false) : this(recordType, flag, 0, 0, chunked) { }
@@ -82,19 +80,19 @@ namespace CSharp.NFC.NDEF
         public byte[] GetBytes()
         {
             List<byte> record = new List<byte>();
-            record.Add(_flagField);
-            record.Add(_typeLengthField);
-            record.AddRange(_payloadLengthField);
+            record.Add(FlagField);
+            record.Add(TypeLengthField);
+            record.AddRange(PayloadLengthField);
             if (_hasID)
             {
-                record.Add(_idLengthField);
+                record.Add(IDLengthField);
             }
-            record.Add(_typeIdentifierField);
+            record.Add(TypeIdentifierField);
             if (_hasID)
             {
-                record.Add(_idField);
+                record.Add(IDField);
             }
-            record.AddRange(_NDEFRecordPayloadBytes);
+            record.AddRange(NDEFRecordPayloadBytes);
             return record.ToArray();
         }
     }

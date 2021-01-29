@@ -149,6 +149,11 @@ namespace NFCApp.UWP
             }
         }
 
+        private void btnReadNDEFMessage_Click(object sender, RoutedEventArgs e)
+        {
+            lblReadNDEFMessage.Text = TicketValidator.ReadNDEFMessages();
+        }
+
         private void btnReconnect_Click(object sender, RoutedEventArgs e)
         {
             TicketValidator.ConnectCard();

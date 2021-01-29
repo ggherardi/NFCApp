@@ -1,15 +1,12 @@
-﻿using System;
+﻿using CSharp.NFC.Cards;
+using CSharp.NFC.Controllers;
+using CSharp.NFC.NDEF;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SmartCards;
-using System.Diagnostics;
-using CSharp.NFC;
-using CSharp.NFC.Cards;
-using CSharp.NFC.NDEF;
-using CSharp.NFC.Controllers;
 
 namespace CSharp.NFC.Readers
 {
@@ -169,19 +166,24 @@ namespace CSharp.NFC.Readers
             return Transmit(new NFCOperation(Get_ReadValueBlockCommand(block)));
         }
 
-        public void ReadNDEFMessages()
+        public string ReadNDEFMessages()
         {
             byte[] bytesToRead = new byte[16];            
             NFCOperation operation = ReadBlocks(4);
             bytesToRead = operation.ResponseBuffer;
-            NDEFMessage ndefMessage = new NDEFMessage(bytesToRead);
-            if(ndefMessage.LengthBytes > 0)
+            NDEFMessage message = NDEFMessage.GetNDEFMessageFromBytes(bytesToRead);
+            bytesToRead = bytesToRead.Skip(message.TotalHeaderLength).ToArray();
+            if(message.Length > 0)
             {
-                while (ndefMessage.ReadByesIntoMessage(bytesToRead))
+                int i = 2;
+                while (message.ReadByesIntoMessage(bytesToRead))
                 {
+                    operation = ReadBlocks((byte)(4 * i));
                     bytesToRead = operation.ResponseBuffer;
+                    i++;
                 }
-            }            
+            }
+            return message.Record.RecordType.ToString();
         }
         #endregion
 

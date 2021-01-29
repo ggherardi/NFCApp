@@ -11,7 +11,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="btnRead" Content="Read" Height="56" Margin="460,110,0,0" VerticalAlignment="Top" Width="284" Click="ButtonRead_Click"/>
+        <Button x:Name="btnRead" Content="Read" Height="56" Margin="457,110,0,0" VerticalAlignment="Top" Width="284" Click="ButtonRead_Click"/>
         <TextBlock x:Name="txtMessages" HorizontalAlignment="Left" Height="69" Margin="59,690,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="324"/>
         <TextBlock x:Name="txtATR" HorizontalAlignment="Left" Margin="59,110,0,0" Text="Waiting ATR.." TextWrapping="Wrap" VerticalAlignment="Top" Height="458" Width="322" />
         <TextBlock x:Name="txtStatus" HorizontalAlignment="Left" Margin="59,595,0,0" Text="Waiting Status.." TextWrapping="Wrap" VerticalAlignment="Top" Height="23" Width="278"/>
@@ -21,22 +21,24 @@
             <TextBlock x:Name="txtReadBlocks" Text="waiting read.." TextWrapping="Wrap"/>
         </ScrollViewer>
         <TextBlock x:Name="txtTestOperation" HorizontalAlignment="Left" Margin="994,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="45" Width="260" Text="waiting test operation.."/>
-        <Button x:Name="btnTestOperation" Content="TestOperation" Height="56" Margin="460,24,0,0" VerticalAlignment="Top" Width="284" Click="btnTestOperation_Click" />
+        <Button x:Name="btnTestOperation" Content="TestOperation" Height="56" Margin="457,30,0,0" VerticalAlignment="Top" Width="284" Click="btnTestOperation_Click" />
         <TextBox x:Name="txtInput" HorizontalAlignment="Left" Height="47" Margin="795,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175"/>
         <TextBlock x:Name="txtInputAsHex" HorizontalAlignment="Left" Height="56" Margin="897,110,0,0" Text="00" TextWrapping="Wrap" VerticalAlignment="Top" Width="73"/>
-        <Button x:Name="btnProtectWithPassword" Content="Protect with password" Height="54" Margin="461,283,0,0" Width="284" Click="btnProtectWithPassword_Click" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtPassword" HorizontalAlignment="Left" Height="54" Margin="795,283,0,0" Text="aaaa" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
+        <Button x:Name="btnProtectWithPassword" Content="Protect with password" Height="54" Margin="456,391,0,0" Width="284" Click="btnProtectWithPassword_Click" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtPassword" HorizontalAlignment="Left" Height="54" Margin="791,391,0,0" Text="aaaa" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
         <Button x:Name="btnIssueManualCommand" Content="Issue command" Height="50" Margin="460,579,0,0" VerticalAlignment="Top" Width="284" Click="btnIssueManualCommand_Click"/>
         <TextBox x:Name="txtManualCommand" HorizontalAlignment="Left" Height="50" Margin="795,579,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="552"/>
         <TextBlock x:Name="txtManualCommandResult" HorizontalAlignment="Left" Height="131" Margin="460,643,0,0" Text="waiting for manual command.." TextWrapping="Wrap" VerticalAlignment="Top" Width="767"/>
         <Button x:Name="btnReconnect" Content="Reconnect" Height="45" Margin="28,35,0,0" VerticalAlignment="Top" Width="126" Click="btnReconnect_Click"/>
-        <Button x:Name="btnWrite" Content="Write" Height="54" Margin="461,197,0,0" VerticalAlignment="Top" Width="284" Click="btnWrite_Click"/>
-        <TextBox x:Name="txtPageAddressToWrite" HorizontalAlignment="Left" Height="54" Margin="884,197,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="78"/>
-        <TextBox x:Name="txtTextToWrite" HorizontalAlignment="Left" Height="54" Margin="1066,197,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="282"/>
-        <TextBlock HorizontalAlignment="Left" Height="54" Margin="796,197,0,0" Text="Page address" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
-        <TextBlock HorizontalAlignment="Left" Height="54" Margin="988,197,0,0" Text="Text to write" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
-        <TextBox x:Name="txtOperationPassword" HorizontalAlignment="Left" Height="45" Margin="283,35,0,0" Text="aaaa" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
+        <Button x:Name="btnWrite" Content="Write" Height="54" Margin="456,319,0,0" VerticalAlignment="Top" Width="284" Click="btnWrite_Click"/>
+        <TextBox x:Name="txtPageAddressToWrite" HorizontalAlignment="Left" Height="54" Margin="879,319,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="78"/>
+        <TextBox x:Name="txtTextToWrite" HorizontalAlignment="Left" Height="54" Margin="1061,319,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="282"/>
+        <TextBlock HorizontalAlignment="Left" Height="54" Margin="791,319,0,0" Text="Page address" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
+        <TextBlock HorizontalAlignment="Left" Height="54" Margin="983,319,0,0" Text="Text to write" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
+        <TextBox x:Name="txtOperationPassword" HorizontalAlignment="Left" Height="45" Margin="283,35,0,0" Text="abcd" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
         <TextBlock HorizontalAlignment="Left" Height="54" Margin="213,47,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
+        <Button x:Name="btnReadNDEFMessage" Content="Read NDEF Message" Height="56" Margin="457,185,0,0" VerticalAlignment="Top" Width="284" Click="btnReadNDEFMessage_Click" />
+        <TextBlock x:Name="lblReadNDEFMessage" HorizontalAlignment="Left" Margin="795,194,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="107" Width="546" Text="waiting Read NDEF Message.."/>
         <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>

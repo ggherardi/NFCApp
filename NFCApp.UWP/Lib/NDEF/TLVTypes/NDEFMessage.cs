@@ -18,6 +18,8 @@ namespace CSharp.NFC.NDEF
         /// Tag Field Value byte for "NDEF Message TLV"        
         /// </summary>
         public override byte TagByte { get => 0x03; }
+        public NDEFRecord Record { get; set; }
+        public int TotalHeaderLength { get; set; }
 
         public NDEFMessage() { }
 
@@ -36,42 +38,58 @@ namespace CSharp.NFC.NDEF
             int bytesReadToSkip = 1;
             NDEFMessage message = new NDEFMessage();
             if (bytes[0] == message.TagByte)
-            {
+            {                
                 message.Length = TLVBlock.GetLengthFromBytes(bytes.Skip(bytesReadToSkip).Take(3).ToArray());
-                bytesReadToSkip += message.Length > 255 ? 3 : 1;
+                bool isLongMessage = message.Length > 255;
+                message.LengthBytes = isLongMessage ? bytes.Skip(bytesReadToSkip).Take(3).ToArray() : bytes.Skip(bytesReadToSkip).Take(1).ToArray();
+                bytesReadToSkip += isLongMessage ? 3 : 1;
                 if (message.Length > 0)
                 {
-                    NDEFRecordFlag flag = NDEFRecordFlag.GetNDEFRecordFlagFromByte(bytes.Skip(bytesReadToSkip).First());
-                    bool hasId = (flag.GetByte() & (int)NDEFRecordFlag.IDLength.True) == (int)NDEFRecordFlag.IDLength.True;
-                    bytesReadToSkip += hasId ? 4 : 3;
-                    NDEFRecordType type = GetNDEFRecordTypeWithTypeIdentifier(bytes[bytesReadToSkip]);
-                    NDEFRecord record = new NDEFRecord(type, flag);
-                    // WIP, I need to decide what item to return in order to keep reading the bytes from the payload!
+                    NDEFRecord record = new NDEFRecord();
+                    NDEFRecordFlag recordFlag = NDEFRecordFlag.GetNDEFRecordFlagFromByte(bytes.Skip(bytesReadToSkip++).First());
+                    record.RecordFlag = recordFlag;
+                    record.FlagField = recordFlag.GetByte();
+                    bool hasId = (record.FlagField & (int)NDEFRecordFlag.IDLength.True) == (int)NDEFRecordFlag.IDLength.True;
+                    bool isShortRecord = (record.FlagField & (int)NDEFRecordFlag.ShortRecord.True) == (int)NDEFRecordFlag.ShortRecord.True;
+                    record.TypeLengthField = bytes.Skip(bytesReadToSkip++).First();
+                    int payloadBytesCount = isShortRecord ? 1 : 4;
+                    record.PayloadLengthField = bytes.Skip(bytesReadToSkip).Take(payloadBytesCount).ToArray();
+                    bytesReadToSkip += payloadBytesCount;
+                    if (hasId)
+                    {
+                        record.IDLengthField = bytes[bytesReadToSkip++];
+                        record.TypeIdentifierField = bytes[bytesReadToSkip++];
+                        record.IDField = bytes[bytesReadToSkip++];
+                    }
+                    else
+                    {
+                        record.TypeIdentifierField = bytes[bytesReadToSkip++];
+                    }                    
+                    NDEFRecordType type = NDEFRecordType.GetNDEFRecordTypeWithTypeIdentifier(record.TypeIdentifierField);                    
+                    type.BuildRecordFromBytes(bytes.Skip(bytesReadToSkip).Take(type.HeaderLength).ToArray());                    
+                    record.RecordType = type;
+                    message.TotalHeaderLength = bytesReadToSkip += type.HeaderLength;
+                    message.Record = record;                    
                 }
+            }
+            else
+            {
+                // No NDEF Message found
             }
             return message;
-        }
-
-        private static NDEFRecordType GetNDEFRecordTypeWithTypeIdentifier(int typeIdentifier)
-        {
-            NDEFRecordType type = null;
-            IEnumerable<Type> recordTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(NDEFRecordType)));
-            PropertyInfo typeIdentifierProperty = typeof(NDEFRecordType).GetProperties().Where(p => p.Name == "TypeIdentifier").FirstOrDefault();
-            foreach(Type recordType in recordTypes)
-            {
-                type = Activator.CreateInstance(recordType) as NDEFRecordType;
-                if (type != null && (int)typeIdentifierProperty.GetValue(type) == typeIdentifier)
-                {
-                    return type;
-                }
-            }
-            return type;
         }
 
         public bool ReadByesIntoMessage(byte[] bytes)
         {
             bool keepReading = true;
-
+            int maxIndexToCopy = bytes.Length;
+            int terminatorIndex = bytes.ToList().FindIndex(b => b == new Terminator().TagByte);
+            if(terminatorIndex != -1)
+            {
+                keepReading = false;
+                maxIndexToCopy = terminatorIndex;
+            }
+            this.Record.RecordType.AddTextToPayload(bytes.Take(maxIndexToCopy).ToArray());
             return keepReading;
         }        
 
