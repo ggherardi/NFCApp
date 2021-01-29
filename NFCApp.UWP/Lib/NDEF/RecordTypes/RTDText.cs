@@ -14,7 +14,7 @@ namespace CSharp.NFC.NDEF
 
         private int _flag = 0x00;
         private byte[] _language;
-        private byte[] _text;
+        private byte[] _textBytes;
 
         public static Language EnglishLanguage = new Language() { Code = new byte[] { 0x65, 0x6E }, Length = 2 };
         public static Language ItalianLanguage = new Language() { Code = new byte[] { 0x69, 0x74 }, Length = 2 };
@@ -23,7 +23,7 @@ namespace CSharp.NFC.NDEF
         {
             _flag = flag.GetByte();
             _language = language.Code;
-            _text = Encoding.Default.GetBytes(textContent);
+            _textBytes = Encoding.Default.GetBytes(textContent);
         }
 
         public RTDText(string textContent, Language language) : this(textContent, language, new RTDTextFlag(RTDTextFlag.LanguageEncoding.UTF8, language.Length)) { }
@@ -35,13 +35,28 @@ namespace CSharp.NFC.NDEF
         public override byte[] GetBytes()
         {
             byte[] rtdTextBytes = new byte[] { (byte)_flag, _language[0], _language[1] };
-            return rtdTextBytes.Concat(_text).ToArray();
+            return rtdTextBytes.Concat(_textBytes).ToArray();
         }
 
         public override void BuildRecordFromBytes(byte[] bytes)
         {
             _flag = bytes[0];
             _language = new byte[] { bytes[1], bytes[2] };
+        }
+
+        public void AddTextToPayload(byte[] bytes)
+        {
+            _textBytes = bytes;
+        }
+
+        public string GetText()
+        {
+            string text = string.Empty;
+            foreach(byte b in _textBytes)
+            {
+                text = $"{text}{(char)b}";
+            }
+            return text;
         }
 
         public enum TextEncoding

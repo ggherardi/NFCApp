@@ -24,6 +24,9 @@ namespace CSharp.NFC.NDEF
         private readonly NDEFRecordType _NDEFRecord;
         private readonly byte[] _NDEFRecordPayloadBytes;
 
+        public NDEFRecordFlag RecordFlag { get => _flagObject; }
+        public NDEFRecordType RecordType { get => _NDEFRecord; }
+
         private bool _isShortRecord;
         private bool _hasID;
 

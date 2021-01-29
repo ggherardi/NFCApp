@@ -42,14 +42,14 @@ namespace CSharp.NFC.NDEF
                 if (message.Length > 0)
                 {
                     NDEFRecordFlag flag = NDEFRecordFlag.GetNDEFRecordFlagFromByte(bytes.Skip(bytesReadToSkip).First());
-                    NDEFRecordType type = GetNDEFRecordTypeWithTypeIdentifier(bytes[];
-
-                    typeIdentifierProperty.GetValue
-                    
-                    RTDText t = new RTDText();
-                    NDEFRecord record = NDEFRecord.
+                    bool hasId = (flag.GetByte() & (int)NDEFRecordFlag.IDLength.True) == (int)NDEFRecordFlag.IDLength.True;
+                    bytesReadToSkip += hasId ? 4 : 3;
+                    NDEFRecordType type = GetNDEFRecordTypeWithTypeIdentifier(bytes[bytesReadToSkip]);
+                    NDEFRecord record = new NDEFRecord(type, flag);
+                    // WIP, I need to decide what item to return in order to keep reading the bytes from the payload!
                 }
             }
+            return message;
         }
 
         private static NDEFRecordType GetNDEFRecordTypeWithTypeIdentifier(int typeIdentifier)
