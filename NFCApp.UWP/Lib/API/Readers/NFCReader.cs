@@ -166,14 +166,13 @@ namespace CSharp.NFC.Readers
             return Transmit(new NFCOperation(Get_ReadValueBlockCommand(block)));
         }
 
-        public string ReadNDEFMessages()
+        public NFCOperation GetNDEFMessagesOperation()
         {
-            byte[] bytesToRead = new byte[16];            
             NFCOperation operation = ReadBlocks(4);
-            bytesToRead = operation.ResponseBuffer;
+            byte[] bytesToRead = operation.ResponseBuffer;
             NDEFMessage message = NDEFMessage.GetNDEFMessageFromBytes(bytesToRead);
             bytesToRead = bytesToRead.Skip(message.TotalHeaderLength).ToArray();
-            if(message.Length > 0)
+            if (message.Length > 0)
             {
                 int i = 2;
                 while (message.ReadByesIntoMessage(bytesToRead))
@@ -183,7 +182,14 @@ namespace CSharp.NFC.Readers
                     i++;
                 }
             }
-            return message.Record.RecordType.ToString();
+            operation.NDEFMessage = message;
+            return operation;
+        }
+
+        public NDEFPayload GetNDEFPayload()
+        {
+            NFCOperation operation = GetNDEFMessagesOperation();
+            return operation.NDEFMessage.Record.RecordContent.GetPayload();
         }
         #endregion
 

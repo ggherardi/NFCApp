@@ -23,6 +23,7 @@ namespace CSharp.NFC.NDEF
 
         public abstract void BuildRecordFromBytes(byte[] bytes);
 
+        public abstract NDEFPayload GetPayload();
         public abstract override string ToString();
 
         public static NDEFRecordType GetNDEFRecordTypeWithTypeIdentifier(int typeIdentifier)

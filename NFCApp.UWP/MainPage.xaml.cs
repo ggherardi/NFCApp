@@ -22,6 +22,8 @@ using CSharp.NFC.Readers;
 using CSharp.NFC;
 using System.Text;
 using CSharp.NFC.Cards;
+using Ticketing;
+using Ticketing.Encryption;
 
 namespace NFCApp.UWP
 {
@@ -53,6 +55,7 @@ namespace NFCApp.UWP
         {
             SmartCard card = args.SmartCard;
             TicketValidator.ConnectCard();
+            
             WriteCardInfo(card);
         }
 
@@ -151,7 +154,7 @@ namespace NFCApp.UWP
 
         private void btnReadNDEFMessage_Click(object sender, RoutedEventArgs e)
         {
-            lblReadNDEFMessage.Text = TicketValidator.ReadNDEFMessages();
+            lblReadNDEFMessage.Text = TicketValidator.GetNDEFPayload();
         }
 
         private void btnReconnect_Click(object sender, RoutedEventArgs e)

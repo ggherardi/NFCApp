@@ -67,7 +67,7 @@ namespace CSharp.NFC.NDEF
                     }                    
                     NDEFRecordType type = NDEFRecordType.GetNDEFRecordTypeWithTypeIdentifier(record.TypeIdentifierField);                    
                     type.BuildRecordFromBytes(bytes.Skip(bytesReadToSkip).Take(type.HeaderLength).ToArray());                    
-                    record.RecordType = type;
+                    record.RecordContent = type;
                     message.TotalHeaderLength = bytesReadToSkip += type.HeaderLength;
                     message.Record = record;                    
                 }
@@ -89,9 +89,9 @@ namespace CSharp.NFC.NDEF
                 keepReading = false;
                 maxIndexToCopy = terminatorIndex;
             }
-            this.Record.RecordType.AddTextToPayload(bytes.Take(maxIndexToCopy).ToArray());
+            this.Record.RecordContent.AddTextToPayload(bytes.Take(maxIndexToCopy).ToArray());
             return keepReading;
-        }        
+        }                
 
         public override byte[] GetFormattedBlock()
         {

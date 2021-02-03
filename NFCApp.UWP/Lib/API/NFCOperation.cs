@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSharp.NFC.NDEF;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,8 @@ namespace CSharp.NFC
         private readonly byte[] _wrappedCommand;
         private readonly string _wrappedCommandAsHex;
 
+        private NFCOperationType OperationType { get; set; }
+
         public byte[] WrappedCommand { get => _wrappedCommand; }
         public string WrappedCommandAsHex { get => _wrappedCommandAsHex; }
         public byte[] ResponseBuffer { get; set; }
@@ -24,8 +27,8 @@ namespace CSharp.NFC
         public NFCCommand ReaderCommand { get => _readerCommand; }
         public NFCCommand ControllerCommand { get => _controllerCommand; }
         public NFCCommand CardCommand { get => _cardCommand; }
-        public int Status { get; set; }
-        private NFCOperationType OperationType { get; set; } 
+        public int Status { get; set; }        
+        public NDEFMessage NDEFMessage { get; set; }
 
         public enum NFCOperationType
         {

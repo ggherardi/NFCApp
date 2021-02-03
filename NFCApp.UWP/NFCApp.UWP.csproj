@@ -91,6 +91,7 @@
   <ItemGroup>
     <Compile Include="Lib\API\Controllers\NFCController.cs" />
     <Compile Include="Lib\API\Controllers\PN532.cs" />
+    <Compile Include="Lib\API\NDEF\NDEFPayload.cs" />
     <Compile Include="Lib\API\NDEF\RecordTypes\RTDText.cs" />
     <Compile Include="Lib\API\NDEF\TLVTypes\NDEFMessage.cs" />
     <Compile Include="Lib\API\NDEF\TLVTypes\Terminator.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Lib\API\Readers\IReaderSignalControl.cs" />
     <Compile Include="Lib\Ticketing\Encryption\TicketEncryption.cs" />
     <Compile Include="Lib\Ticketing\SmartTicket.cs" />
+    <Compile Include="Lib\Ticketing\TicketingService.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

@@ -39,8 +39,8 @@
         <TextBlock HorizontalAlignment="Left" Height="54" Margin="213,47,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
         <Button x:Name="btnReadNDEFMessage" Content="Read NDEF Message" Height="56" Margin="457,185,0,0" VerticalAlignment="Top" Width="284" Click="btnReadNDEFMessage_Click" />
         <TextBlock x:Name="lblReadNDEFMessage" HorizontalAlignment="Left" Margin="795,194,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="107" Width="546" Text="waiting Read NDEF Message.."/>
-        <TextBlock x:Name="" HorizontalAlignment="Left" Height="57" Margin="457,467,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="886"/>
-        <TextBlock HorizontalAlignment="Left" Height="57" Margin="457,535,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="886"/>
+        <TextBlock x:Name="lblTicketBeforeValidation" HorizontalAlignment="Left" Height="57" Margin="457,467,0,0" Text="waiting ticket" TextWrapping="Wrap" VerticalAlignment="Top" Width="886"/>
+        <TextBlock x:Name="lblTicketAfterValidation" HorizontalAlignment="Left" Height="57" Margin="457,535,0,0" Text="waiting ticket" TextWrapping="Wrap" VerticalAlignment="Top" Width="886"/>
         <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>

@@ -51,14 +51,13 @@ namespace CSharp.NFC.NDEF
             _textBytes = _textBytes.Concat(bytes).ToArray();
         }
 
-        public string GetText()
+        public override NDEFPayload GetPayload()
         {
-            string text = string.Empty;
-            foreach(byte b in _textBytes)
+            return new NDEFPayload()
             {
-                text = $"{text}{(char)b}";
-            }
-            return text;
+                Bytes = _textBytes,
+                Text = this.ToString()
+            };
         }
 
         public override string ToString()
