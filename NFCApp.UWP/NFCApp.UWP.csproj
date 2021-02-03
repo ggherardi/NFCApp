@@ -89,30 +89,32 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Lib\Controllers\NFCController.cs" />
-    <Compile Include="Lib\Controllers\PN532.cs" />
-    <Compile Include="Lib\NDEF\RecordTypes\RTDText.cs" />
-    <Compile Include="Lib\NDEF\TLVTypes\NDEFMessage.cs" />
-    <Compile Include="Lib\NDEF\TLVTypes\Terminator.cs" />
-    <Compile Include="Lib\NFCCommand.cs" />
-    <Compile Include="Lib\NFCOperation.cs" />
-    <Compile Include="Lib\Readers\NFCReader.cs" />
-    <Compile Include="Lib\NDEF\NDEFRecord.cs" />
-    <Compile Include="Lib\NDEF\NDEFRecordType.cs" />
-    <Compile Include="Lib\NDEF\TLVBlock.cs" />
-    <Compile Include="Lib\Utility.cs" />
-    <Compile Include="Lib\Readers\ACR122.cs" />
+    <Compile Include="Lib\API\Controllers\NFCController.cs" />
+    <Compile Include="Lib\API\Controllers\PN532.cs" />
+    <Compile Include="Lib\API\NDEF\RecordTypes\RTDText.cs" />
+    <Compile Include="Lib\API\NDEF\TLVTypes\NDEFMessage.cs" />
+    <Compile Include="Lib\API\NDEF\TLVTypes\Terminator.cs" />
+    <Compile Include="Lib\API\NFCCommand.cs" />
+    <Compile Include="Lib\API\NFCOperation.cs" />
+    <Compile Include="Lib\API\Readers\NFCReader.cs" />
+    <Compile Include="Lib\API\NDEF\NDEFRecord.cs" />
+    <Compile Include="Lib\API\NDEF\NDEFRecordType.cs" />
+    <Compile Include="Lib\API\NDEF\TLVBlock.cs" />
+    <Compile Include="Lib\API\Utility.cs" />
+    <Compile Include="Lib\API\Readers\ACR122.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Lib\Cards\NFCCard.cs" />
-    <Compile Include="Lib\Readers\IReaderSignalControl.cs" />
+    <Compile Include="Lib\API\Cards\NFCCard.cs" />
+    <Compile Include="Lib\API\Readers\IReaderSignalControl.cs" />
+    <Compile Include="Lib\Ticketing\Encryption\TicketEncryption.cs" />
+    <Compile Include="Lib\Ticketing\SmartTicket.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Lib\Cards\Ntag215.cs" />
+    <Compile Include="Lib\API\Cards\Ntag215.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Lib\Winscard.cs" />
+    <Compile Include="Lib\API\Winscard.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -173,7 +175,10 @@
       <Name>NFCApp</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
+    <Reference Include="System.Text.Json, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

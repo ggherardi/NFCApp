@@ -7,7 +7,7 @@
     x:Class="NFCApp.UWP.MainPage"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Margin="0,-11,-971,-40">
+    <Grid Margin="0,-11,-971,-14">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
@@ -26,9 +26,9 @@
         <TextBlock x:Name="txtInputAsHex" HorizontalAlignment="Left" Height="56" Margin="897,110,0,0" Text="00" TextWrapping="Wrap" VerticalAlignment="Top" Width="73"/>
         <Button x:Name="btnProtectWithPassword" Content="Protect with password" Height="54" Margin="456,391,0,0" Width="284" Click="btnProtectWithPassword_Click" VerticalAlignment="Top"/>
         <TextBox x:Name="txtPassword" HorizontalAlignment="Left" Height="54" Margin="791,391,0,0" Text="aaaa" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
-        <Button x:Name="btnIssueManualCommand" Content="Issue command" Height="50" Margin="460,579,0,0" VerticalAlignment="Top" Width="284" Click="btnIssueManualCommand_Click"/>
-        <TextBox x:Name="txtManualCommand" HorizontalAlignment="Left" Height="50" Margin="795,579,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="552"/>
-        <TextBlock x:Name="txtManualCommandResult" HorizontalAlignment="Left" Height="131" Margin="460,643,0,0" Text="waiting for manual command.." TextWrapping="Wrap" VerticalAlignment="Top" Width="767"/>
+        <Button x:Name="btnIssueManualCommand" Content="Issue command" Height="50" Margin="456,622,0,0" VerticalAlignment="Top" Width="284" Click="btnIssueManualCommand_Click"/>
+        <TextBox x:Name="txtManualCommand" HorizontalAlignment="Left" Height="50" Margin="791,622,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="552"/>
+        <TextBlock x:Name="txtManualCommandResult" Height="84" Margin="456,690,7,0" Text="waiting for manual command.." TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="btnReconnect" Content="Reconnect" Height="45" Margin="28,35,0,0" VerticalAlignment="Top" Width="126" Click="btnReconnect_Click"/>
         <Button x:Name="btnWrite" Content="Write" Height="54" Margin="456,319,0,0" VerticalAlignment="Top" Width="284" Click="btnWrite_Click"/>
         <TextBox x:Name="txtPageAddressToWrite" HorizontalAlignment="Left" Height="54" Margin="879,319,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="78"/>
@@ -39,6 +39,8 @@
         <TextBlock HorizontalAlignment="Left" Height="54" Margin="213,47,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
         <Button x:Name="btnReadNDEFMessage" Content="Read NDEF Message" Height="56" Margin="457,185,0,0" VerticalAlignment="Top" Width="284" Click="btnReadNDEFMessage_Click" />
         <TextBlock x:Name="lblReadNDEFMessage" HorizontalAlignment="Left" Margin="795,194,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="107" Width="546" Text="waiting Read NDEF Message.."/>
+        <TextBlock x:Name="" HorizontalAlignment="Left" Height="57" Margin="457,467,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="886"/>
+        <TextBlock HorizontalAlignment="Left" Height="57" Margin="457,535,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Width="886"/>
         <!--<TextBlock x:Name="txtReadBlocks" HorizontalAlignment="Left" Margin="581,479,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="267" Width="444" Text="waiting read.."/>-->
     </Grid>
 </forms:WindowsPage>
