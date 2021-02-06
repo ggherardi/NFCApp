@@ -21,7 +21,7 @@
             <TextBlock x:Name="txtReadBlocks" Text="waiting read.." TextWrapping="Wrap"/>
         </ScrollViewer>
         <TextBlock x:Name="txtTestOperation" HorizontalAlignment="Left" Margin="994,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="45" Width="260" Text="waiting test operation.."/>
-        <Button x:Name="btnTestOperation" Content="TestOperation" Height="56" Margin="457,30,0,0" VerticalAlignment="Top" Width="284" Click="btnTestOperation_Click" />
+        <Button x:Name="btnTicketValidation" Content="Ticket Validation" Height="56" Margin="457,30,0,0" VerticalAlignment="Top" Width="284" Click="btnTicketValidation_Click" />
         <TextBox x:Name="txtInput" HorizontalAlignment="Left" Height="47" Margin="795,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="175"/>
         <TextBlock x:Name="txtInputAsHex" HorizontalAlignment="Left" Height="56" Margin="897,110,0,0" Text="00" TextWrapping="Wrap" VerticalAlignment="Top" Width="73"/>
         <Button x:Name="btnProtectWithPassword" Content="Protect with password" Height="54" Margin="456,391,0,0" Width="284" Click="btnProtectWithPassword_Click" VerticalAlignment="Top"/>

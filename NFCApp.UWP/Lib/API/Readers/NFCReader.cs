@@ -4,6 +4,7 @@ using CSharp.NFC.NDEF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SmartCards;
@@ -216,12 +217,12 @@ namespace CSharp.NFC.Readers
             return operations;
         }
 
-        private List<NFCOperation> WriteTextNDEFMessage(string text, int startingPage)
+        private List<NFCOperation> WriteTextNDEFMessage(byte[] textBytes, int startingPage)
         {
             List<NFCOperation> operations = null;
             try
             {
-                NDEFMessage message = NDEFMessage.GetTextNDEFMessage(text);
+                NDEFMessage message = new NDEFMessage(textBytes, NDEFRecordType.Types.Text);
                 byte[] blockBytes = message.GetFormattedBlock();
                 operations = WriteBlocks(blockBytes, startingPage);
             }
@@ -234,7 +235,12 @@ namespace CSharp.NFC.Readers
 
         public List<NFCOperation> WriteTextNDEFMessage(string value)
         {
-            return WriteTextNDEFMessage(value, 4);
+            return WriteTextNDEFMessage(Encoding.ASCII.GetBytes(value), 4);
+        }
+
+        public List<NFCOperation> WriteTextNDEFMessage(byte[] textByte)
+        {
+            return WriteTextNDEFMessage(textByte, 4);
         }
         #endregion
 

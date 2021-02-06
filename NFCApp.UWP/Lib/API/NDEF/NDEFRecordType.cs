@@ -17,6 +17,12 @@ namespace CSharp.NFC.NDEF
         public abstract int TypeLength { get; }
         public abstract int HeaderLength { get; }
 
+        public enum Types
+        {
+            Text,
+            URI
+        }
+
         public abstract byte[] GetBytes();
 
         public abstract void AddTextToPayload(byte[] bytes);

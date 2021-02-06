@@ -30,13 +30,13 @@
     <AppXManifest Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2021-01-29T18:56:14.875</Modified>
+      <Modified>2021-02-05T18:21:11.608</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\NFCApp.UWP.exe">
       <PackagePath>entrypoint\NFCApp.UWP.exe</PackagePath>
-      <Modified>2021-01-29T18:56:13.935</Modified>
+      <Modified>2021-02-05T18:21:10.877</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\.nuget\packages\ndeflibrary\3.0.2\lib\portable-net45+win8+wp8+wpa81\NdefLibrary.dll">
       <PackagePath>NdefLibrary.dll</PackagePath>
@@ -76,7 +76,31 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp\bin\Debug\netstandard2.0\NFCApp.dll">
       <PackagePath>NFCApp.dll</PackagePath>
-      <Modified>2021-01-29T18:15:35.808</Modified>
+      <Modified>2021-02-05T17:43:53.575</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\System.Memory.dll">
+      <PackagePath>System.Memory.dll</PackagePath>
+      <Modified>2021-01-14T15:45:29.279</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\System.Text.Json.dll">
+      <PackagePath>System.Text.Json.dll</PackagePath>
+      <Modified>2021-01-14T15:45:29.291</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\System.Runtime.CompilerServices.Unsafe.dll">
+      <PackagePath>System.Runtime.CompilerServices.Unsafe.dll</PackagePath>
+      <Modified>2021-01-14T15:45:29.285</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\System.Text.Encodings.Web.dll">
+      <PackagePath>System.Text.Encodings.Web.dll</PackagePath>
+      <Modified>2021-01-14T15:45:29.286</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\System.Threading.Tasks.Extensions.dll">
+      <PackagePath>System.Threading.Tasks.Extensions.dll</PackagePath>
+      <Modified>2021-01-14T15:45:29.296</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Microsoft.Bcl.AsyncInterfaces.dll">
+      <PackagePath>Microsoft.Bcl.AsyncInterfaces.dll</PackagePath>
+      <Modified>2021-01-14T15:45:29.126</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\.nuget\packages\win2d.uwp\1.20.0\lib\uap10.0\Microsoft.Graphics.Canvas.winmd">
       <PackagePath>Microsoft.Graphics.Canvas.winmd</PackagePath>
@@ -235,11 +259,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\App.xbf">
       <PackagePath>App.xbf</PackagePath>
-      <Modified>2021-01-29T18:56:13.853</Modified>
+      <Modified>2021-02-05T18:21:10.804</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\MainPage.xbf">
       <PackagePath>MainPage.xbf</PackagePath>
-      <Modified>2021-01-29T18:56:13.853</Modified>
+      <Modified>2021-02-05T18:21:10.804</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.18362.0\\redist\Debug\x86\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
@@ -255,11 +279,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2021-01-29T18:15:41.579</Modified>
+      <Modified>2021-02-05T17:43:59.613</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\User\Source\Repos\NFCApp\NFCApp.UWP\bin\x86\Debug\Core\NFCApp.UWP.exe">
       <PackagePath>NFCApp.UWP.exe</PackagePath>
-      <Modified>2021-01-29T18:56:14.872</Modified>
+      <Modified>2021-02-05T18:21:11.605</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

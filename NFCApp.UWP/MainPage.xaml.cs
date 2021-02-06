@@ -154,7 +154,7 @@ namespace NFCApp.UWP
 
         private void btnReadNDEFMessage_Click(object sender, RoutedEventArgs e)
         {
-            lblReadNDEFMessage.Text = TicketValidator.GetNDEFPayload();
+            lblReadNDEFMessage.Text = TicketValidator.GetNDEFPayload().Text;
         }
 
         private void btnReconnect_Click(object sender, RoutedEventArgs e)
@@ -162,12 +162,19 @@ namespace NFCApp.UWP
             TicketValidator.ConnectCard();
         }
 
-        private void btnTestOperation_Click(object sender, RoutedEventArgs e)
+        private void btnTicketValidation_Click(object sender, RoutedEventArgs e)
         {
+            //NFCOperation operation = TicketValidator.GetCardVersion();
             Authenticate();
-            NFCOperation operation = TicketValidator.GetCardVersion();
-            WriteMessageAsync(txtTestOperation, $"Command:{Environment.NewLine}{operation.WrappedCommandAsHex}");
-            AppendMessageAsync(txtTestOperation, $"Response:{Environment.NewLine}{operation.ResponseAsHexString}");          
+            NFCOperation cardGuidOperation = TicketValidator.GetCardGuid();
+            byte[] cardGuidBytes = cardGuidOperation.ReaderCommand.Payload.PayloadBytes;
+            TicketingService ticketingService = new TicketingService(TicketValidator, cardGuidBytes);
+            ticketingService.WriteTicket();
+            //SmartTicket ticket = ticketingService.ReadTicket();
+            //WriteMessageAsync(txtTestOperation, $"Command:{Environment.NewLine}{ticket.Credit}");
+
+            //WriteMessageAsync(txtTestOperation, $"Command:{Environment.NewLine}{operation.WrappedCommandAsHex}");
+            //AppendMessageAsync(txtTestOperation, $"Response:{Environment.NewLine}{operation.ResponseAsHexString}");          
         }
 
         private void btnProtectWithPassword_Click(object sender, RoutedEventArgs e)

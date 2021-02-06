@@ -20,14 +20,20 @@ namespace CSharp.NFC.NDEF
         public static Language EnglishLanguage = new Language() { Code = new byte[] { 0x65, 0x6E }, Length = 2 };
         public static Language ItalianLanguage = new Language() { Code = new byte[] { 0x69, 0x74 }, Length = 2 };
 
-        public RTDText(string textContent, Language language, RTDTextFlag flag)
-        {
-            _flag = flag.GetByte();
-            _language = language.Code;
-            _textBytes = Encoding.Default.GetBytes(textContent);
+        protected RTDText(byte[] textContentBytes, byte[] languageBytes, byte flagByte) 
+        {            
+            _textBytes = textContentBytes;
+            _language = languageBytes;
+            _flag = flagByte;
         }
 
+        protected RTDText(string textContent, Language language, RTDTextFlag flag) : this(Encoding.ASCII.GetBytes(textContent), language.Code, flag.GetByte()) { }
+
+        public RTDText(byte[] textContentBytes, Language language) : this(textContentBytes, language.Code, new RTDTextFlag(RTDTextFlag.LanguageEncoding.UTF8, language.Length).GetByte()) { }
+
         public RTDText(string textContent, Language language) : this(textContent, language, new RTDTextFlag(RTDTextFlag.LanguageEncoding.UTF8, language.Length)) { }
+
+        public RTDText(byte[] textContentBytes) : this(textContentBytes, EnglishLanguage) { }
 
         public RTDText(string textContent) : this(textContent, EnglishLanguage) { }
 

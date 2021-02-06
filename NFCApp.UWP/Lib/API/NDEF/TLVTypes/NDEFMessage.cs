@@ -23,15 +23,22 @@ namespace CSharp.NFC.NDEF
 
         public NDEFMessage() { }
 
-        public static NDEFMessage GetTextNDEFMessage(string text)
+        public NDEFMessage(byte[] bytes, NDEFRecordType.Types type) 
         {
-            RTDText rtdText = new RTDText(text, RTDText.EnglishLanguage);
-            NDEFRecord record = new NDEFRecord(rtdText);
-            NDEFMessage message = new NDEFMessage();
-            message.ValueBytes = record.GetBytes();
-            message.LengthBytes = GetValueLengthInBytes(message.ValueBytes.Length);
-            return message;
+            switch(type)
+            {
+                case NDEFRecordType.Types.Text:
+                    RTDText rtdText = new RTDText(bytes, RTDText.EnglishLanguage);
+                    NDEFRecord record = new NDEFRecord(rtdText);                    
+                    ValueBytes = record.GetBytes();
+                    LengthBytes = GetValueLengthInBytes(ValueBytes.Length);
+                    Record = record;
+                    break;
+                default: break;
+            }
         }
+
+        public NDEFMessage(string text, NDEFRecordType.Types type) : this(Encoding.ASCII.GetBytes(text), type) { }
 
         public static NDEFMessage GetNDEFMessageFromBytes(byte[] bytes)
         {
