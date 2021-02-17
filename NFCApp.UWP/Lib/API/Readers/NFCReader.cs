@@ -170,7 +170,7 @@ namespace CSharp.NFC.Readers
         public NFCOperation GetNDEFMessagesOperation()
         {
             NFCOperation operation = ReadBlocks(4);
-            byte[] bytesToRead = operation.ResponseBuffer;
+            byte[] bytesToRead = operation.ReaderCommand.Payload.PayloadBytes;
             NDEFMessage message = NDEFMessage.GetNDEFMessageFromBytes(bytesToRead);
             bytesToRead = bytesToRead.Skip(message.TotalHeaderLength).ToArray();
             if (message.Length > 0)
@@ -179,7 +179,7 @@ namespace CSharp.NFC.Readers
                 while (message.ReadByesIntoMessage(bytesToRead))
                 {
                     operation = ReadBlocks((byte)(4 * i));
-                    bytesToRead = operation.ResponseBuffer;
+                    bytesToRead = operation.ReaderCommand.Payload.PayloadBytes;
                     i++;
                 }
             }

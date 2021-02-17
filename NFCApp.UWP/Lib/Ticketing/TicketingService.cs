@@ -45,7 +45,7 @@ namespace Ticketing
         public SmartTicket GetConnectedTicket()
         {
             NDEFPayload payload = _ticketValidator.GetNDEFPayload();
-            SmartTicket ticket = TicketEncryption.DecryptTicket(payload.Bytes, _cardID);
+            SmartTicket ticket = TicketEncryption.DecryptTicket(payload.Bytes, TicketEncryption.GetPaddedIV(_cardID));
             return ticket;
         }
     }

@@ -170,6 +170,8 @@ namespace NFCApp.UWP
             byte[] cardGuidBytes = cardGuidOperation.ReaderCommand.Payload.PayloadBytes;
             TicketingService ticketingService = new TicketingService(TicketValidator, cardGuidBytes);
             ticketingService.WriteTicket();
+            SmartTicket ticket = ticketingService.ReadTicket();
+            WriteMessageAsync(lblTicketAfterValidation, ticket.Credit.ToString());
             //SmartTicket ticket = ticketingService.ReadTicket();
             //WriteMessageAsync(txtTestOperation, $"Command:{Environment.NewLine}{ticket.Credit}");
 
@@ -189,7 +191,8 @@ namespace NFCApp.UWP
             byte[] bytesToWrite = Utility.GetASCIIStringBytes(txtTextToWrite.Text);
             string password = txtOperationPassword.Text;
             Authenticate();
-            TicketValidator.WriteBlocks(bytesToWrite, (byte)pageAddressToWrite);
+            TicketValidator.WriteTextNDEFMessage(bytesToWrite);
+            //TicketValidator.WriteBlocks(bytesToWrite, (byte)pageAddressToWrite);
         }
 
         private void btnIssueManualCommand_Click(object sender, RoutedEventArgs e)

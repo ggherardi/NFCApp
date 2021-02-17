@@ -35,7 +35,7 @@
         <TextBox x:Name="txtTextToWrite" HorizontalAlignment="Left" Height="54" Margin="1061,319,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="282"/>
         <TextBlock HorizontalAlignment="Left" Height="54" Margin="791,319,0,0" Text="Page address" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
         <TextBlock HorizontalAlignment="Left" Height="54" Margin="983,319,0,0" Text="Text to write" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
-        <TextBox x:Name="txtOperationPassword" HorizontalAlignment="Left" Height="45" Margin="283,35,0,0" Text="abcd" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
+        <TextBox x:Name="txtOperationPassword" HorizontalAlignment="Left" Height="45" Margin="283,35,0,0" Text="aaaa" TextWrapping="Wrap" VerticalAlignment="Top" Width="127"/>
         <TextBlock HorizontalAlignment="Left" Height="54" Margin="213,47,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top" Width="71"/>
         <Button x:Name="btnReadNDEFMessage" Content="Read NDEF Message" Height="56" Margin="457,185,0,0" VerticalAlignment="Top" Width="284" Click="btnReadNDEFMessage_Click" />
         <TextBlock x:Name="lblReadNDEFMessage" HorizontalAlignment="Left" Margin="795,194,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="107" Width="546" Text="waiting Read NDEF Message.."/>
