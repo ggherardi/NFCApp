@@ -224,6 +224,14 @@ namespace CSharp.NFC.Readers
             {
                 NDEFMessage message = new NDEFMessage(textBytes, NDEFRecordType.Types.Text);
                 byte[] blockBytes = message.GetFormattedBlock();
+                if (startingPage < _connectedCard.FirstUserDataMemoryPage)
+                {
+                    throw new Exception($"Invalid starting write page. The first available user data memory page for the connected card is {_connectedCard.FirstUserDataMemoryPage}");
+                }
+                if (blockBytes.Length > ((_connectedCard.LastUserDataMemoryPage + 1 - startingPage) * 4))
+                {
+                    throw new Exception($"Byte buffer to write length is higher than the connect card memory capacity.");
+                }
                 operations = WriteBlocks(blockBytes, startingPage);
             }
             catch(Exception ex)
@@ -233,9 +241,14 @@ namespace CSharp.NFC.Readers
             return operations;
         }
 
+        public List<NFCOperation> WriteTextNDEFMessage(string value, int startingPage)
+        {
+            return WriteTextNDEFMessage(Encoding.ASCII.GetBytes(value), startingPage);
+        }
+
         public List<NFCOperation> WriteTextNDEFMessage(string value)
         {
-            return WriteTextNDEFMessage(Encoding.ASCII.GetBytes(value), 4);
+            return WriteTextNDEFMessage(Encoding.ASCII.GetBytes(value), _connectedCard.FirstUserDataMemoryPage);
         }
 
         public List<NFCOperation> WriteTextNDEFMessage(byte[] textByte)

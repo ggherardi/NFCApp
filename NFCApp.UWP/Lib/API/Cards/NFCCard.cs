@@ -9,7 +9,7 @@ namespace CSharp.NFC.Cards
     public abstract class NFCCard
     {
         protected IntPtr _cardNumber;
-        public int CardNumber { get { return _cardNumber.ToInt32(); } }
+        public int CardNumber { get { return _cardNumber.ToInt32(); } }        
 
         public NFCCard(IntPtr hCard)
         {
@@ -24,6 +24,8 @@ namespace CSharp.NFC.Cards
         public abstract int MaxWritableBlocks { get; protected set; }
         public abstract int MaxReadableBytes { get; protected set; }
         public abstract int UserConfigurationStartingPage { get; protected set; }
+        public abstract int FirstUserDataMemoryPage { get; protected set; }
+        public abstract int LastUserDataMemoryPage { get; protected set; }
 
         public NFCCommand GetPasswordAuthenticationCommand(string password)
         {

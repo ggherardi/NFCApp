@@ -12,6 +12,8 @@ namespace CSharp.NFC.Cards
         public override int MaxWritableBlocks { get => 4; protected set => MaxWritableBlocks = value; }
         public override int MaxReadableBytes { get => 16; protected set => MaxReadableBytes = value; }
         public override int UserConfigurationStartingPage { get => 0x83; protected set => UserConfigurationStartingPage = value; }
+        public override int LastUserDataMemoryPage { get => 0x81; protected set => LastUserDataMemoryPage = value; }
+        public override int FirstUserDataMemoryPage { get => 0x4; protected set => FirstUserDataMemoryPage = value; }        
         #endregion
 
         #region Commands
@@ -94,7 +96,7 @@ namespace CSharp.NFC.Cards
             };
             return command;
         });
-        public Ntag215Command WRITE { get => _WRITE.Value; }
+        public Ntag215Command WRITE { get => _WRITE.Value; }        
         #endregion
 
         #region Constructors

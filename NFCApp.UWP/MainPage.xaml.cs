@@ -154,6 +154,7 @@ namespace NFCApp.UWP
 
         private void btnReadNDEFMessage_Click(object sender, RoutedEventArgs e)
         {
+            Authenticate();
             lblReadNDEFMessage.Text = TicketValidator.GetNDEFPayload().Text;
         }
 

@@ -88,15 +88,18 @@ namespace CSharp.NFC.NDEF
 
         public bool ReadByesIntoMessage(byte[] bytes)
         {
-            bool keepReading = true;
-            int maxIndexToCopy = bytes.Length;
-            int terminatorIndex = bytes.ToList().FindIndex(b => b == new Terminator().TagByte);
-            if(terminatorIndex != -1)
+            bool keepReading = bytes.Length > 0;
+            if (keepReading)
             {
-                keepReading = false;
-                maxIndexToCopy = terminatorIndex;
-            }
-            this.Record.RecordContent.AddTextToPayload(bytes.Take(maxIndexToCopy).ToArray());
+                int maxIndexToCopy = bytes.Length;
+                int terminatorIndex = bytes.ToList().FindIndex(b => b == new Terminator().TagByte);
+                if (terminatorIndex != -1)
+                {
+                    keepReading = false;
+                    maxIndexToCopy = terminatorIndex;
+                }
+                this.Record.RecordContent.AddTextToPayload(bytes.Take(maxIndexToCopy).ToArray());
+            }            
             return keepReading;
         }                
 
