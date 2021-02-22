@@ -91,6 +91,7 @@
   <ItemGroup>
     <Compile Include="Lib\API\Controllers\NFCController.cs" />
     <Compile Include="Lib\API\Controllers\PN532.cs" />
+    <Compile Include="Lib\API\NDEF\NDEFOperation.cs" />
     <Compile Include="Lib\API\NDEF\NDEFPayload.cs" />
     <Compile Include="Lib\API\NDEF\RecordTypes\RTDText.cs" />
     <Compile Include="Lib\API\NDEF\TLVTypes\NDEFMessage.cs" />

@@ -24,6 +24,7 @@ using System.Text;
 using CSharp.NFC.Cards;
 using Ticketing;
 using Ticketing.Encryption;
+using CSharp.NFC.NDEF;
 
 namespace NFCApp.UWP
 {
@@ -155,7 +156,10 @@ namespace NFCApp.UWP
         private void btnReadNDEFMessage_Click(object sender, RoutedEventArgs e)
         {
             Authenticate();
-            lblReadNDEFMessage.Text = TicketValidator.GetNDEFPayload().Text;
+            NDEFOperation op = TicketValidator.GetNDEFMessagesOperation();
+            lblReadNDEFMessage.Text = op.NDEFMessage.Record.RecordType.GetPayload().Text;
+            WriteOperationResults(op.Operations);
+            //lblReadNDEFMessage.Text = TicketValidator.GetNDEFPayload().Text;
         }
 
         private void btnReconnect_Click(object sender, RoutedEventArgs e)
@@ -165,19 +169,16 @@ namespace NFCApp.UWP
 
         private void btnTicketValidation_Click(object sender, RoutedEventArgs e)
         {
-            //NFCOperation operation = TicketValidator.GetCardVersion();
             Authenticate();
             NFCOperation cardGuidOperation = TicketValidator.GetCardGuid();
             byte[] cardGuidBytes = cardGuidOperation.ReaderCommand.Payload.PayloadBytes;
-            TicketingService ticketingService = new TicketingService(TicketValidator, cardGuidBytes);
-            ticketingService.WriteTicket();
+            TicketingService ticketingService = new TicketingService(TicketValidator, cardGuidBytes, txtOperationPassword.Text);
+            WriteOperationResults(ticketingService.WriteTicket());
             SmartTicket ticket = ticketingService.ReadTicket();
-            WriteMessageAsync(lblTicketAfterValidation, ticket.Credit.ToString());
-            //SmartTicket ticket = ticketingService.ReadTicket();
-            //WriteMessageAsync(txtTestOperation, $"Command:{Environment.NewLine}{ticket.Credit}");
-
-            //WriteMessageAsync(txtTestOperation, $"Command:{Environment.NewLine}{operation.WrappedCommandAsHex}");
-            //AppendMessageAsync(txtTestOperation, $"Response:{Environment.NewLine}{operation.ResponseAsHexString}");          
+            if(ticket != null)
+            {
+                WriteMessageAsync(lblTicketAfterValidation, ticket.Credit.ToString());
+            }            
         }
 
         private void btnProtectWithPassword_Click(object sender, RoutedEventArgs e)
@@ -215,6 +216,16 @@ namespace NFCApp.UWP
         }
 
         #region AuxMethods
+        private void WriteOperationResults(List<NFCOperation> operations)
+        {
+            List<string> results = new List<string>();
+            foreach(NFCOperation op in operations)
+            {
+                results.Add(op.ReaderCommand.Response.CommandStatus.Result.ToString());
+            }
+            lvOperationResults.ItemsSource = results; 
+        }
+
         private void Authenticate()
         {
             if (!string.IsNullOrEmpty(txtOperationPassword.Text))

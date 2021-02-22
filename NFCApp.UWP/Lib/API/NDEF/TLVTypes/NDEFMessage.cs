@@ -42,6 +42,10 @@ namespace CSharp.NFC.NDEF
 
         public static NDEFMessage GetNDEFMessageFromBytes(byte[] bytes)
         {
+            if(bytes.Length == 0)
+            {
+                throw new Exception("The provided bytes buffer is empty");
+            }
             int bytesReadToSkip = 1;
             NDEFMessage message = new NDEFMessage();
             if (bytes[0] == message.TagByte)
@@ -74,7 +78,7 @@ namespace CSharp.NFC.NDEF
                     }                    
                     NDEFRecordType type = NDEFRecordType.GetNDEFRecordTypeWithTypeIdentifier(record.TypeIdentifierField);                    
                     type.BuildRecordFromBytes(bytes.Skip(bytesReadToSkip).Take(type.HeaderLength).ToArray());                    
-                    record.RecordContent = type;
+                    record.RecordType = type;
                     message.TotalHeaderLength = bytesReadToSkip += type.HeaderLength;
                     message.Record = record;                    
                 }
@@ -98,7 +102,7 @@ namespace CSharp.NFC.NDEF
                     keepReading = false;
                     maxIndexToCopy = terminatorIndex;
                 }
-                this.Record.RecordContent.AddTextToPayload(bytes.Take(maxIndexToCopy).ToArray());
+                this.Record.RecordType.AddTextToPayload(bytes.Take(maxIndexToCopy).ToArray());
             }            
             return keepReading;
         }                

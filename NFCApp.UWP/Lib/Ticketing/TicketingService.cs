@@ -12,16 +12,20 @@ namespace Ticketing
 {
     public class TicketingService
     {
+        string _password;
         byte[] _cardID;
         NFCReader _ticketValidator;
 
-        public TicketingService(NFCReader ticketValidator, byte[] cardID) 
+        public TicketingService(NFCReader ticketValidator, byte[] cardID, string password) 
         {
             _cardID = cardID;
             _ticketValidator = ticketValidator;
+            _password = password;
         }
 
-        public void WriteTicket()
+        public TicketingService(NFCReader ticketValidator, byte[] cardID) : this(ticketValidator, cardID, string.Empty) { }
+
+        public List<NFCOperation> WriteTicket()
         {
             string encryptedTicket = string.Empty;
             SmartTicket ticket = new SmartTicket() // Sample ticket, I need to replace it with the curret object
@@ -34,7 +38,8 @@ namespace Ticketing
                 CardID = new byte[] { 0x04, 0x15, 0x91, 0x8A, 0xCB, 0x42, 0x20 }
             };            
             byte[] encryptedTicketBytes = TicketEncryption.EncryptTicket(ticket, TicketEncryption.GetPaddedIV(_cardID));
-            _ticketValidator.WriteTextNDEFMessage(encryptedTicketBytes);
+            List<NFCOperation> operations = _ticketValidator.WriteTextNDEFMessage(encryptedTicketBytes, _password);
+            return operations;
         }
 
         public SmartTicket ReadTicket()
@@ -44,8 +49,12 @@ namespace Ticketing
 
         public SmartTicket GetConnectedTicket()
         {
+            SmartTicket ticket = null;
             NDEFPayload payload = _ticketValidator.GetNDEFPayload();
-            SmartTicket ticket = TicketEncryption.DecryptTicket(payload.Bytes, TicketEncryption.GetPaddedIV(_cardID));
+            if(payload != null)
+            {
+                ticket = TicketEncryption.DecryptTicket(payload.Bytes, TicketEncryption.GetPaddedIV(_cardID));
+            }            
             return ticket;
         }
     }

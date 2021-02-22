@@ -28,7 +28,6 @@ namespace CSharp.NFC
         public NFCCommand ControllerCommand { get => _controllerCommand; }
         public NFCCommand CardCommand { get => _cardCommand; }
         public int Status { get; set; }        
-        public NDEFMessage NDEFMessage { get; set; }
 
         public enum NFCOperationType
         {

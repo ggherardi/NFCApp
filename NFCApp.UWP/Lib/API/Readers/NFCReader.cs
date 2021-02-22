@@ -167,30 +167,42 @@ namespace CSharp.NFC.Readers
             return Transmit(new NFCOperation(Get_ReadValueBlockCommand(block)));
         }
 
-        public NFCOperation GetNDEFMessagesOperation()
+        public NDEFOperation GetNDEFMessagesOperation()
         {
-            NFCOperation operation = ReadBlocks(4);
-            byte[] bytesToRead = operation.ReaderCommand.Payload.PayloadBytes;
-            NDEFMessage message = NDEFMessage.GetNDEFMessageFromBytes(bytesToRead);
-            bytesToRead = bytesToRead.Skip(message.TotalHeaderLength).ToArray();
-            if (message.Length > 0)
+            NDEFOperation ndefOperation = new NDEFOperation();
+            try
             {
-                int i = 2;
-                while (message.ReadByesIntoMessage(bytesToRead))
+                NFCOperation nfcOperation = ReadBlocks(4);
+                ndefOperation.Operations.Add(nfcOperation);
+                byte[] bytesToRead = nfcOperation.ReaderCommand.Payload.PayloadBytes;
+                NDEFMessage message = NDEFMessage.GetNDEFMessageFromBytes(bytesToRead);
+                bytesToRead = bytesToRead.Skip(message.TotalHeaderLength).ToArray();
+                if (message.Length > 0)
                 {
-                    operation = ReadBlocks((byte)(4 * i));
-                    bytesToRead = operation.ReaderCommand.Payload.PayloadBytes;
-                    i++;
+                    int i = 2;
+                    while (message.ReadByesIntoMessage(bytesToRead))
+                    {
+                        nfcOperation = ReadBlocks((byte)(4 * i));
+                        bytesToRead = nfcOperation.ReaderCommand.Payload.PayloadBytes;
+                        ndefOperation.Operations.Add(nfcOperation);
+                        i++;
+                    }
                 }
+                ndefOperation.NDEFMessage = message;
             }
-            operation.NDEFMessage = message;
-            return operation;
+            catch(Exception ex)
+            {
+
+            }
+            return ndefOperation;
         }
 
         public NDEFPayload GetNDEFPayload()
         {
-            NFCOperation operation = GetNDEFMessagesOperation();
-            return operation.NDEFMessage.Record.RecordContent.GetPayload();
+            NDEFPayload payload = new NDEFPayload();
+            NDEFOperation operation = GetNDEFMessagesOperation();
+            payload = operation.NDEFMessage.Record?.RecordType.GetPayload();
+            return payload;
         }
         #endregion
 
@@ -205,19 +217,23 @@ namespace CSharp.NFC.Readers
             return WriteBlocks(blockNumber, dataIn, _connectedCard.MaxWritableBlocks);
         }
 
-        public List<NFCOperation> WriteBlocks(byte[] bytes, int startingPage)
+        public List<NFCOperation> WriteBlocks(byte[] bytes, int startingPage, string password = "")
         {
             List<NFCOperation> operations = new List<NFCOperation>();
             int j = 0;
             for (int i = 0; i < bytes.Length; i += _connectedCard.MaxWritableBlocks)
             {
+                if (!string.IsNullOrEmpty(password))
+                {
+                    Authenticate(password);
+                }                
                 operations.Add(WriteBlocks((byte)(startingPage + j), bytes.Skip(j * _connectedCard.MaxWritableBlocks).Take(_connectedCard.MaxWritableBlocks).ToArray()));
                 j++;
             }
             return operations;
         }
 
-        private List<NFCOperation> WriteTextNDEFMessage(byte[] textBytes, int startingPage)
+        private List<NFCOperation> WriteTextNDEFMessage(byte[] textBytes, int startingPage, string password = "")
         {
             List<NFCOperation> operations = null;
             try
@@ -232,7 +248,7 @@ namespace CSharp.NFC.Readers
                 {
                     throw new Exception($"Byte buffer to write length is higher than the connect card memory capacity.");
                 }
-                operations = WriteBlocks(blockBytes, startingPage);
+                operations = WriteBlocks(blockBytes, startingPage, password);
             }
             catch(Exception ex)
             {
@@ -251,9 +267,14 @@ namespace CSharp.NFC.Readers
             return WriteTextNDEFMessage(Encoding.ASCII.GetBytes(value), _connectedCard.FirstUserDataMemoryPage);
         }
 
+        public List<NFCOperation> WriteTextNDEFMessage(byte[] textByte, string password)
+        {
+            return WriteTextNDEFMessage(textByte, 4, password);
+        }
+
         public List<NFCOperation> WriteTextNDEFMessage(byte[] textByte)
         {
-            return WriteTextNDEFMessage(textByte, 4);
+            return WriteTextNDEFMessage(textByte, string.Empty);
         }
         #endregion
 
